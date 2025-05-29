@@ -1,8 +1,10 @@
+import NavBar from "../components/Nav/NavBar"
 
 const NotFound = () => {
   return (
     <div>
-      <p>This page is non-existent</p>
+      <NavBar />
+      <h1>404 - Not Found</h1>
     </div>
   )
 }
