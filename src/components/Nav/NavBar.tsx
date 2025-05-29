@@ -4,6 +4,7 @@ import { NavBarMenu } from '../../MockData/NavData';
 import { useState } from 'react';
 import ResponsiveMenu from './ResponsiveMenu';
 import Banner from './Banner';
+import { motion } from 'motion/react';
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +20,13 @@ const NavBar = () => {
   };
 
   return (
-    <div>
+    <>
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.5 }}
+    >
+      <div>
       <nav className="flex justify-between items-center py-1 mx-auto container">
         {/* LOGO SECTION */}
         <div className="container flex justify-between items-center py-3">
@@ -87,6 +94,10 @@ const NavBar = () => {
 
       <Banner />
     </div>
+    </motion.div>
+    
+    </>
+    
   );
 };
 
