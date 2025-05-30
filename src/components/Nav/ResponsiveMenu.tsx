@@ -19,7 +19,7 @@ const ResponsiveMenu: React.FC<ResponsiveMenuProps> = ({ isOpen, onClose }) => {
           exit={{ opacity: 0, y: -100 }} // Slides up and fades out on exit
           transition={{ duration: 0.3 }}
           // Styling for the overlay/container of the mobile menu
-          className="absolute top-20 left-0 w-full min-h-[calc(100vh-5rem)] bg-white z-20 overflow-y-auto lg:hidden"
+          className="top-20 left-0 w-full min-h-[calc(100vh-5rem)] bg-white z-20 overflow-y-auto lg:hidden"
         >
           {/* Menu content container */}
           <div
