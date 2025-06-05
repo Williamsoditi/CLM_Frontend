@@ -130,7 +130,7 @@ const Contact = () => {
               className="absolute top-4 left-4 md:top-8 md:left-8"
               variants={itemVariants}
             >
-              <span className="text-white text-lg font-semibold flex items-center md:block">
+              <span className="text-white text-lg font-semibold flex items-center md:block sm:hidden">
                 <a href="/">
                   <div className="flex items-center font-bold">
                     <img
