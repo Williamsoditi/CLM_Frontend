@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import NavBar from "../components/Nav/NavBar"; 
 import { motion } from "framer-motion"; 
 import logo from "../../src/assets/logo.png"; 
+import Footer from "../components/Footer";
 
 
 const Contact = () => {
@@ -115,7 +116,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f2f6]">
-      <NavBar /> {/* Your Navbar component */}
+      <NavBar /> 
       <div className="flex-grow flex items-center justify-center py-10">
         <motion.div
           className="flex flex-col md:flex-row bg-white rounded-lg shadow-xl overflow-hidden max-w-6xl w-full mx-4 md:mx-auto"
@@ -342,6 +343,7 @@ const Contact = () => {
           </div>
         </motion.div>
       </div>
+      <Footer />
     </div>
   );
 };

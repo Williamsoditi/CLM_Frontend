@@ -2,6 +2,7 @@ import NavBar from "../components/Nav/NavBar"
 import { Box, Typography, Grid, Card, CardContent, Avatar } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { motion } from 'framer-motion'; 
+import Footer from "../components/Footer";
 
 // Define a custom theme with orange and blue palette
 const theme = createTheme({
@@ -174,88 +175,149 @@ const Roster = () => {
     <div>
       <NavBar />
       <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          py: 8, 
-          px: { xs: 2, sm: 4, md: 8 }, 
-          backgroundColor: 'background.default',
-          minHeight: '100vh', 
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 6, 
-        }}
-      >
-        <Typography variant="h4" component="h1" gutterBottom sx={{ textAlign: 'center' }}>
-          Our Elite Roster
-        </Typography>
-
-        <Grid
-          container
-          spacing={4}
-          justifyContent="center"
-          component={motion.div} 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+        <Box
+          sx={{
+            py: 8,
+            px: { xs: 2, sm: 4, md: 8 },
+            backgroundColor: "background.default",
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 6,
+          }}
         >
-          {teamRoster.map((player) => (
-            <Grid
-              item
-              key={player.id}
-              xs={12}
-              sm={6} 
-              md={4}  
-              lg={3}  
-              sx={{ display: 'flex' }} 
-              component={motion.div}
-              variants={itemVariants}
-              whileHover="hover"
-            >
-              <Card sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', p: 3 }}> {/* Increased padding */}
-                <Avatar
-                  alt={player.name}
-                  src={player.avatar}
-                  imgProps={{ onError: (e) => { e.target.src = `https://placehold.co/150x150/${player.id % 2 === 0 ? '2196F3' : 'FF5722'}/FFFFFF?text=${player.name.charAt(0) + player.name.split(' ')[1].charAt(0)}`; } }}
-                  sx={{ mb: 2 }}
-                />
-               <CardContent sx={{ textAlign: 'center', width: '100%', pt: 0 }}> {/* Padding top removed, added to Card */}
-                  <Typography variant="subtitle1" component="div" sx={{ mb: 1 }}>
-                    #{player.number}
-                  </Typography>
-                  <Typography variant="h6" component="div" sx={{ mb: 1.5 }}>
-                    {player.name}
-                  </Typography>
-                  {/* Player details section */}
-                  <Box sx={{
-                    mt: 2,
-                    pt: 2,
-                    borderTop: '1px solid #e0e0e0',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '8px', 
-                    alignItems: 'center',
-                  }}>
-                    <Typography variant="body2">
-                      <Box component="span" sx={{ fontWeight: 'bold', color: theme.palette.text.secondary }}>Position:</Box> {player.position}
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            sx={{ textAlign: "center" }}
+          >
+            Our Elite Roster
+          </Typography>
+
+          <Grid
+            container
+            spacing={4}
+            justifyContent="center"
+            component={motion.div}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {teamRoster.map((player) => (
+              <Grid
+                item
+                key={player.id}
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
+                sx={{ display: "flex" }}
+                component={motion.div}
+                variants={itemVariants}
+                whileHover="hover"
+              >
+                <Card
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    p: 3,
+                  }}
+                >
+                  {" "}
+                  {/* Increased padding */}
+                  <Avatar
+                    alt={player.name}
+                    src={player.avatar}
+                    imgProps={{
+                      onError: (e) => {
+                        e.target.src = `https://placehold.co/150x150/${
+                          player.id % 2 === 0 ? "2196F3" : "FF5722"
+                        }/FFFFFF?text=${
+                          player.name.charAt(0) +
+                          player.name.split(" ")[1].charAt(0)
+                        }`;
+                      },
+                    }}
+                    sx={{ mb: 2 }}
+                  />
+                  <CardContent
+                    sx={{ textAlign: "center", width: "100%", pt: 0 }}
+                  >
+                    {" "}
+                    {/* Padding top removed, added to Card */}
+                    <Typography
+                      variant="subtitle1"
+                      component="div"
+                      sx={{ mb: 1 }}
+                    >
+                      #{player.number}
                     </Typography>
-                    <Typography variant="body2">
-                      <Box component="span" sx={{ fontWeight: 'bold', color: theme.palette.text.secondary }}>Height:</Box> {player.height}
+                    <Typography variant="h6" component="div" sx={{ mb: 1.5 }}>
+                      {player.name}
                     </Typography>
-                    <Typography variant="body2">
-                      <Box component="span" sx={{ fontWeight: 'bold', color: theme.palette.text.secondary }}>Weight:</Box> {player.weight}
-                    </Typography>
-                    
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-    </ThemeProvider>
+                    {/* Player details section */}
+                    <Box
+                      sx={{
+                        mt: 2,
+                        pt: 2,
+                        borderTop: "1px solid #e0e0e0",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography variant="body2">
+                        <Box
+                          component="span"
+                          sx={{
+                            fontWeight: "bold",
+                            color: theme.palette.text.secondary,
+                          }}
+                        >
+                          Position:
+                        </Box>{" "}
+                        {player.position}
+                      </Typography>
+                      <Typography variant="body2">
+                        <Box
+                          component="span"
+                          sx={{
+                            fontWeight: "bold",
+                            color: theme.palette.text.secondary,
+                          }}
+                        >
+                          Height:
+                        </Box>{" "}
+                        {player.height}
+                      </Typography>
+                      <Typography variant="body2">
+                        <Box
+                          component="span"
+                          sx={{
+                            fontWeight: "bold",
+                            color: theme.palette.text.secondary,
+                          }}
+                        >
+                          Weight:
+                        </Box>{" "}
+                        {player.weight}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      </ThemeProvider>
+      <Footer />
     </div>
-  )
+  );
 }
 
 export default Roster

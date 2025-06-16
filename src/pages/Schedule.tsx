@@ -3,6 +3,7 @@ import { Box, Typography, Grid, Card, CardContent, CircularProgress, Alert } fro
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 import NavBar from '../components/Nav/NavBar';
+import Footer from '../components/Footer';
 
 // Define a custom theme with orange and blue palette
 const theme = createTheme({
@@ -343,6 +344,7 @@ const Schedule = () => {
         )}
       </Box>
     </ThemeProvider>
+    <Footer />
     </div>
     
   );
