@@ -114,7 +114,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#f1f2f6]">
       <NavBar /> {/* Your Navbar component */}
       <div className="flex-grow flex items-center justify-center py-10">
         <motion.div
