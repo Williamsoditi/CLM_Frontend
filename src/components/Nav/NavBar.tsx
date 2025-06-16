@@ -26,8 +26,8 @@ const NavBar = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.5 }}
       >
-        <div className="bg-gradient-to-r from-black/70 to-gray-700/50 z-20">
-          <nav className="flex justify-between items-center py-1 mx-auto container sticky top-0 z-50 w-full">
+        <div className="bg-gradient-to-r from-black/70 to-gray-700/50 z-20 sticky top-0 backdrop-blur-md">
+          <nav className="flex justify-between items-center py-1 mx-auto container top-0 z-50 w-full" >
             {/* LOGO SECTION */}
             <div className="container flex justify-between items-center py-3">
               <a href="/">

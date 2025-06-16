@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { NavBarMenu } from "../../MockData/NavData"; // Assuming this path is correct
+import { NavBarMenu } from "../../MockData/NavData"; 
 import { MdClose } from "react-icons/md"; // Import a close icon
 
 // Define the props interface
