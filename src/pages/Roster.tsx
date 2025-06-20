@@ -207,26 +207,28 @@ const Roster = () => {
           >
             {teamRoster.map((player) => (
               <Grid
-                item
                 key={player.id}
+                item
                 xs={12}
                 sm={6}
                 md={4}
                 lg={3}
                 sx={{ display: "flex" }}
-                component={motion.div}
-                variants={itemVariants}
-                whileHover="hover"
               >
-                <Card
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    p: 3,
-                  }}
+                <motion.div
+                  variants={itemVariants}
+                  whileHover="hover"
+                  style={{ width: "100%", display: "flex" }}
                 >
+                  <Card
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      p: 3,
+                    }}
+                  >
                   {" "}
                   {/* Increased padding */}
                   <Avatar
@@ -234,7 +236,7 @@ const Roster = () => {
                     src={player.avatar}
                     imgProps={{
                       onError: (e) => {
-                        e.target.src = `https://placehold.co/150x150/${
+                        (e.target as HTMLImageElement).src = `https://placehold.co/150x150/${
                           player.id % 2 === 0 ? "2196F3" : "FF5722"
                         }/FFFFFF?text=${
                           player.name.charAt(0) +
@@ -309,7 +311,8 @@ const Roster = () => {
                       </Typography>
                     </Box>
                   </CardContent>
-                </Card>
+                  </Card>
+                </motion.div>
               </Grid>
             ))}
           </Grid>
