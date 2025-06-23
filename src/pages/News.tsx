@@ -33,7 +33,7 @@ const theme = createTheme({
         },
     },
     typography: {
-        fontFamily: 'Inter, sans-serif',
+        fontFamily: 'Poppins, sans-serif',
         h4: {
             fontWeight: 800,
             color: '#FF5722',
@@ -147,11 +147,12 @@ const News = () => {
                         py: 8,
                         px: { xs: 2, sm: 4, md: 8 },
                         backgroundColor: 'background.default',
-                        minHeight: '100vh',
+                        // minHeight: '100vh',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center', // Keep center for the main content block
                         gap: 6,
+                        flexGrow: 1, // Allow the box to grow and fill available space
                     }}
                 >
                     <Typography

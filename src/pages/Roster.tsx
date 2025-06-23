@@ -25,7 +25,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: 'Poppins, sans-serif',
     h4: {
       fontWeight: 800, 
       color: '#FF5722', 
@@ -214,11 +214,12 @@ const Roster = () => {
             py: 8,
             px: { xs: 2, sm: 4, md: 8 },
             backgroundColor: "background.default",
-            minHeight: "100vh",
+            // minHeight: "100vh",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             gap: 6,
+            flexGrow: 1,
           }}
         >
           <Typography

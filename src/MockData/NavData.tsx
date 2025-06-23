@@ -29,4 +29,9 @@ export const NavBarMenu = [
         title: "Contact",
         link: "/contact",
     },
+    // {
+    //     id: 7,
+    //     title: "Admin",
+    //     link: "/admin",
+    // },
 ];
