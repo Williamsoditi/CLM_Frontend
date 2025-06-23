@@ -275,12 +275,8 @@ const Schedule = () => {
           >
             {schedule.map((game) => (
               <Grid
-                item
+                size= {{ xs: 12, sm: 6, md: 4, lg: 3 }}
                 key={game.id}
-                xs={12} // Full width on extra small screens
-                sm={6}  // Half width on small screens
-                md={4}  // One-third width on medium screens
-                lg={3}  // One-fourth width on large screens
                 sx={{ display: 'flex', justifyContent: 'center' }}
                 component={motion.div}
                 variants={cardWrapperVariants} // Apply card specific variants

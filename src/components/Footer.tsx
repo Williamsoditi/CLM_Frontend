@@ -76,7 +76,7 @@ const Footer = () => {
       >
         <Grid container spacing={{ xs: 4, md: 10 }} justifyContent="center">
           {/* Logo and Tagline Section */}
-          <Grid item xs={12} md={4} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+          <Grid size= {{ xs: 12, sm: 6, md: 4, lg: 3 }} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
             <motion.div variants={sectionVariants}>
               <a href="/">
                 <Box sx={{ display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' }, alignItems: 'center', mb: 2 }}>
@@ -97,7 +97,7 @@ const Footer = () => {
           </Grid>
 
           {/* Quick Links Section */}
-          <Grid item xs={6} md={2}>
+          <Grid size= {{ xs: 6, sm: 6, md: 2, lg: 3 }}>
             <motion.div variants={sectionVariants}>
               <Typography variant="h6" sx={{ color: 'primary.main' }}>
                 Quick Links
@@ -133,7 +133,7 @@ const Footer = () => {
           </Grid>
 
           {/* Social Media Section */}
-          <Grid item xs={6} md={2}>
+          <Grid  size= {{ xs: 6, sm: 3, md: 2, lg: 3 }}>
             <motion.div variants={sectionVariants}>
               <Typography variant="h6" sx={{ color: 'primary.main' }}>
                 Follow Us
@@ -161,7 +161,7 @@ const Footer = () => {
           </Grid>
 
           {/* Contact Info Section */}
-          <Grid item xs={12} md={4} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+          <Grid size= {{ xs: 12, sm: 6, md: 4, lg: 3 }} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
             <motion.div variants={sectionVariants}>
               <Typography variant="h6" sx={{ color: 'primary.main' }}>
                 Contact Info

@@ -272,13 +272,8 @@ const Roster = () => {
                   : null; // Set to null if no image path
 
                 return (
-                  <Grid
+                  <Grid size= {{ xs: 12, sm: 6, md: 4, lg: 3 }}
                     key={player.id}
-                    item
-                    xs={12}
-                    sm={6}
-                    md={4}
-                    lg={3}
                     sx={{ display: "flex" }}
                   >
                     <motion.div
@@ -313,7 +308,7 @@ const Roster = () => {
                           }
                           imgProps={{
                             onError: (e) => {
-                              e.target.src = `https://placehold.co/150x150/${
+                              (e.target as HTMLImageElement).src = `https://placehold.co/150x150/${
                                 player.jersey_number % 2 === 0
                                   ? "2196F3"
                                   : "FF5722"
@@ -392,20 +387,6 @@ const Roster = () => {
                               </Box>{" "}
                               {player.weight}
                             </Typography>
-                            {player.bio && (
-                              <Typography variant="body2">
-                                <Box
-                                  component="span"
-                                  sx={{
-                                    fontWeight: "bold",
-                                    color: theme.palette.text.secondary,
-                                  }}
-                                >
-                                  Bio:
-                                </Box>{" "}
-                                {player.bio}
-                              </Typography>
-                            )}
                           </Box>
                         </CardContent>
                       </Card>

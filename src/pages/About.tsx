@@ -389,7 +389,7 @@ const About = () => {
                 Mission & Values
               </Typography>
               <Grid container spacing={4}>
-                <Grid item xs={12} md={6}>
+                <Grid size= {{ xs: 12, sm: 6, md: 4, lg: 3 }}>
                   <Typography variant="h5" gutterBottom>
                     Our Mission
                   </Typography>
@@ -397,7 +397,7 @@ const About = () => {
                     To achieve excellence in basketball through disciplined training, strategic play, and unwavering team spirit, while inspiring our fans and positively impacting our community.
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid size= {{ xs: 12, sm: 6, md: 4, lg: 3 }}>
                   <Typography variant="h5" gutterBottom>
                     Our Core Values
                   </Typography>
@@ -445,7 +445,7 @@ const About = () => {
               </Typography>
               <Grid container spacing={4} justifyContent="center">
                 {teamMembers.map((member, index) => (
-                  <Grid item xs={12} sm={6} md={3} key={index}>
+                  <Grid size= {{ xs: 12, sm: 6, md: 4, lg: 3 }}  key={index}>
                     <Card
                       sx={{
                         display: 'flex',
@@ -463,9 +463,6 @@ const About = () => {
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                           {member.role}
-                        </Typography>
-                        <Typography variant="body2">
-                          {member.bio}
                         </Typography>
                       </CardContent>
                     </Card>
