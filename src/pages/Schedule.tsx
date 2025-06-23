@@ -1,135 +1,95 @@
-import  { useState, useEffect } from 'react';
-import { Box, Typography, Grid, Card, CardContent, CircularProgress, Alert } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { motion } from 'framer-motion';
-import NavBar from '../components/Nav/NavBar';
-import Footer from '../components/Footer';
+import { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CircularProgress,
+  Alert,
+  Container,
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { motion } from "framer-motion";
+import NavBar from "../components/Nav/NavBar";
+import Footer from "../components/Footer";
+import { styled } from "@mui/material/styles";
+
+const HeaderBox = styled(Box)(({ theme }) => ({
+  borderRadius: 18,
+  padding: theme.spacing(4, 2),
+  marginBottom: theme.spacing(4),
+  textAlign: "center",
+  color: "black",
+}));
 
 // Define a custom theme with orange and blue palette
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#FF5722', 
+      main: "#FF5722",
     },
     secondary: {
-      main: '#2196F3', 
+      main: "#2196F3",
     },
     background: {
-      default: '#f1f2f6', 
-      paper: '#ffffff', 
+      default: "#f1f2f6",
+      paper: "#ffffff",
     },
     text: {
-      primary: '#2c3e50', 
-      secondary: '#607d8b', 
+      primary: "#2c3e50",
+      secondary: "#607d8b",
     },
   },
   typography: {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: "Poppins, sans-serif",
     h4: {
       fontWeight: 800,
-      color: '#FF5722', 
-      textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
-      fontSize: '2.5rem', 
-      '@media (min-width:600px)': {
-        fontSize: '3rem',
+      color: "#FF5722",
+      textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
+      fontSize: "2.5rem",
+      "@media (min-width:600px)": {
+        fontSize: "3rem",
       },
     },
     h6: {
-      fontWeight: 700, 
-      color: '#2196F3', 
-      letterSpacing: '0.02em', 
-      fontSize: '1.4rem', 
+      fontWeight: 700,
+      color: "#2196F3",
+      letterSpacing: "0.02em",
+      fontSize: "1.4rem",
     },
     subtitle1: {
-      fontWeight: 800, 
-      color: '#FF5722', 
-      fontSize: '1.8rem', 
+      fontWeight: 800,
+      color: "#FF5722",
+      fontSize: "1.8rem",
     },
     body2: {
-      color: '#455a64', 
-      fontSize: '0.98rem', 
+      color: "#455a64",
+      fontSize: "0.98rem",
     },
   },
   components: {
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 16, 
-          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)', 
-          border: '1px solid #e0e0e0',
-          height: '100%', 
-          maxWidth: 300, 
-          minWidth: 260, // 
-          margin: '0 auto', 
-          display: 'flex', 
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-between', 
-          padding: '24px', 
+          borderRadius: 16,
+          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.18)",
+          border: "1px solid #e0e0e0",
+          height: "100%",
+          maxWidth: 320,
+          minWidth: 260, //
+          margin: "0 auto",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "24px",
+          transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
         },
       },
     },
   },
 });
-
-// Simulated API data - this would typically come from a backend
-const mockScheduleData = [
-  {
-    id: 1,
-    opponent: 'Phoenix Suns',
-    time: '7:00 PM EST',
-    venue: 'Arena 1',
-    date: 'July 20, 2025',
-    isHome: true,
-    league: 'SIEL League',
-  },
-  {
-    id: 2,
-    opponent: 'Chicago Bulls',
-    time: '8:30 PM EST',
-    venue: 'Opponent Court',
-    date: 'July 23, 2025',
-    isHome: false,
-    league: 'KBF League', 
-  },
-  {
-    id: 3,
-    opponent: 'Boston Celtics',
-    time: '6:00 PM EST',
-    venue: 'Arena 1',
-    date: 'July 27, 2025',
-    isHome: true,
-    league: 'SIEL League', 
-  },
-  {
-    id: 4,
-    opponent: 'Los Angeles Lakers',
-    time: '9:00 PM EST',
-    venue: 'Opponent Court',
-    date: 'July 30, 2025',
-    isHome: false,
-    league: 'KBF League', 
-  },
-  {
-    id: 5,
-    opponent: 'Golden State Warriors',
-    time: '7:30 PM EST',
-    venue: 'Arena 1',
-    date: 'August 2, 2025',
-    isHome: true,
-    league: 'SIEL League', 
-  },
-  {
-    id: 6,
-    opponent: 'Milwaukee Bucks',
-    time: '8:00 PM EST',
-    venue: 'Opponent Court',
-    date: 'August 5, 2025',
-    isHome: false,
-    league: 'KBF League', 
-  },
-];
-
 
 // Framer Motion variants for the overall Grid container (staggers cards)
 const outerContainerVariants = {
@@ -158,7 +118,7 @@ const cardWrapperVariants = {
   hover: {
     y: -10,
     scale: 1.03,
-    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.3)',
+    boxShadow: "0 16px 32px rgba(0, 0, 0, 0.35)",
     transition: {
       duration: 0.3,
       ease: "easeOut",
@@ -184,170 +144,257 @@ const textDetailVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
-
-type Game = {
+type Schedule = {
   id: number;
   opponent: string;
-  time: string;
-  venue: string;
-  date: string;
-  isHome: boolean;
-  league: string;
+  game_time: string;
+  location: string;
+  game_date: string;
+  game_type: "HOME" | "AWAY";
+  league_name: string;
 };
 
 const Schedule = () => {
-  const [schedule, setSchedule] = useState<Game[]>([]);
+  const [schedule, setSchedule] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        // Simulate an API call delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        // In a real application, you would make a fetch call here:
-        // const response = await fetch('/api/schedule');
-        // if (!response.ok) {
-        //   throw new Error(`HTTP error! status: ${response.status}`);
-        // }
-        // const data = await response.json();
-        setSchedule(mockScheduleData); // Using mock data for demonstration
+        // IMPORTANT: Replace with your actual Django API endpoint
+        const response = await fetch("http://localhost:8000/api/schedule/"); // Adjust port/domain if necessary
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data: Schedule[] = await response.json();
+        setSchedule(data);
       } catch (err) {
         console.error("Failed to fetch schedule:", err);
-        setError("Failed to load schedule. Please try again later.");
+        setError(
+          "Failed to load schedule. Please check your network connection or try again later."
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchSchedule();
-  }, []); 
+  }, []);
 
   return (
     <div>
       <NavBar />
       <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          py: 8, 
-          px: { xs: 2, sm: 4, md: 8 }, 
-          backgroundColor: 'background.default', 
-          minHeight: '100vh', 
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 6,
-        }}
-      >
-        
-        <Typography variant="h4" component="h2" gutterBottom sx={{ textAlign: 'center', mb: 4 }}>
-          Upcoming Games
-        </Typography>
-
-        {loading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-            <CircularProgress color="primary" />
-            <Typography variant="h6" sx={{ ml: 2, color: 'text.secondary' }}>Loading schedule...</Typography>
-          </Box>
-        )}
-
-        {error && (
-          <Alert severity="error" sx={{ width: '100%', maxWidth: '500px', mx: 'auto' }}>
-            {error}
-          </Alert>
-        )}
-
-        {!loading && !error && schedule.length === 0 && (
-          <Typography variant="h6" color="text.secondary">
-            No upcoming games scheduled at the moment. Check back soon!
-          </Typography>
-        )}
-
-        {!loading && !error && schedule.length > 0 && (
-          <Grid
-            container
-            spacing={4}
-            justifyContent="center"
-            component={motion.div}
-            variants={outerContainerVariants}
-            initial="hidden" // Outer container starts hidden
-            animate="visible" // Outer container animates to visible, triggering staggered children
-          >
-            {schedule.map((game) => (
-              <Grid
-                item
-                key={game.id}
-                xs={12} // Full width on extra small screens
-                sm={6}  // Half width on small screens
-                md={4}  // One-third width on medium screens
-                lg={3}  // One-fourth width on large screens
-                sx={{ display: 'flex', justifyContent: 'center' }}
-                component={motion.div}
-                variants={cardWrapperVariants} // Apply card specific variants
-                whileHover="hover"
+        <Box
+          sx={{
+            py: { xs: 3, sm: 2, md: 4 },
+            px: { xs: 2, sm: 4, md: 8 },
+            backgroundColor: "background.default",
+            // minHeight: "calc(100vh - 64px)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 1,
+            flexGrow: 1,
+          }}
+        >
+          <Container maxWidth="md">
+            <HeaderBox>
+              <Typography
+                variant="h4"
+                component="h2"
+                gutterBottom
+                sx={{ color: "#FF5722" }}
               >
-                <Card
-                  sx={{
-                    borderTop: `5px solid ${game.isHome ? theme.palette.primary.main : theme.palette.secondary.main}`,
-                    background: game.isHome ? 'linear-gradient(145deg, #fff3e0, #ffeddb)' : 'linear-gradient(145deg, #e3f2fd, #d0efff)',
-                  }}
-                >
-                  <CardContent
-                    sx={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}
-                    component={motion.div} // Make CardContent a motion component
-                    variants={cardContentStaggerVariants} // Apply stagger variants to CardContent
-                    initial="hidden" // CardContent children start hidden
-                    animate="visible" // CardContent children animate to visible
+                Upcoming Games
+              </Typography>
+              <Typography variant="h6" sx={{ color: "#FF5722" }}>
+                Don't miss any action!
+              </Typography>
+            </HeaderBox>
+          </Container>
+
+          {loading && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "200px",
+              }}
+            >
+              <CircularProgress color="primary" size={60} thickness={4} />
+              <Typography variant="h6" sx={{ mt: 2, color: "text.secondary" }}>
+                Fetching game schedule...
+              </Typography>
+            </Box>
+          )}
+
+          {error && (
+            <Alert
+              severity="error"
+              sx={{
+                width: "100%",
+                maxWidth: "600px",
+                mx: "auto",
+                mb: 4,
+                p: 2,
+                fontSize: "1.1rem",
+              }}
+            >
+              {error}
+            </Alert>
+          )}
+
+          {!loading && !error && schedule.length === 0 && (
+            <Box sx={{ textAlign: "center", py: 4 }}>
+              <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+                No upcoming games scheduled at the moment.
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Please check back soon for updates!
+              </Typography>
+            </Box>
+          )}
+
+          {!loading && !error && schedule.length > 0 && (
+            <Grid
+              container
+              spacing={6}
+              justifyContent="center"
+              component={motion.div}
+              variants={outerContainerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {schedule.map((game) => {
+                // Parse date and time for better formatting
+                const gameDateTime = new Date(
+                  `${game.game_date}T${game.game_time}`
+                );
+                const formattedDate = gameDateTime.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                });
+                const formattedTime = gameDateTime.toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                });
+
+                const isHomeGame = game.game_type === "HOME";
+
+                return (
+                  <Grid
+                    item // Changed 'size' to 'item' and added responsive props
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    lg={3}
+                    key={game.id}
+                    sx={{ display: "flex", justifyContent: "center" }}
+                    component={motion.div}
+                    variants={cardWrapperVariants}
+                    whileHover="hover"
                   >
-                    <motion.div variants={textDetailVariants}>
-                      <Typography variant="h6" component="div" sx={{ mb: 0.5, color: theme.palette.text.primary }}>
-                        <Box component="span" sx={{ fontWeight: 'bold' }}>vs.</Box> {game.opponent}
-                      </Typography>
-                    </motion.div>
-                    <motion.div variants={textDetailVariants}>
-                      <Typography variant="body2" color="text.secondary">
-                        <Box component="span" sx={{ fontWeight: 'bold' }}>League:</Box> {game.league}
-                      </Typography>
-                    </motion.div>
-                    <motion.div variants={textDetailVariants}>
-                      <Typography variant="body2" color="text.secondary">
-                        <Box component="span" sx={{ fontWeight: 'bold' }}>Date:</Box> {game.date}
-                      </Typography>
-                    </motion.div>
-                    <motion.div variants={textDetailVariants}>
-                      <Typography variant="body2" color="text.secondary">
-                        <Box component="span" sx={{ fontWeight: 'bold' }}>Time:</Box> {game.time}
-                      </Typography>
-                    </motion.div>
-                    <motion.div variants={textDetailVariants}>
-                      <Typography variant="body2" color="text.secondary">
-                        <Box component="span" sx={{ fontWeight: 'bold' }}>Venue:</Box> {game.venue}
-                      </Typography>
-                    </motion.div>
-                    <motion.div variants={textDetailVariants}>
-                      <Typography
-                        variant="subtitle1"
-                        component="div"
+                    <Card
+                      sx={{
+                        borderTop: `5px solid ${
+                          isHomeGame
+                            ? theme.palette.primary.main
+                            : theme.palette.secondary.main
+                        }`,
+                        background: isHomeGame
+                          ? "linear-gradient(145deg, #fff3e0, #ffeddb)"
+                          : "linear-gradient(145deg, #e3f2fd, #d0efff)",
+                      }}
+                    >
+                      <CardContent
                         sx={{
-                          mt: 1,
-                          color: game.isHome ? theme.palette.primary.main : theme.palette.secondary.main
+                          textAlign: "center",
+                          width: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "8px",
                         }}
+                        component={motion.div}
+                        variants={cardContentStaggerVariants}
+                        initial="hidden"
+                        animate="visible"
                       >
-                        {game.isHome ? 'HOME GAME' : 'AWAY GAME'}
-                      </Typography>
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Box>
-    </ThemeProvider>
-    <Footer />
+                        <motion.div variants={textDetailVariants}>
+                          <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{ mb: 0.5, color: theme.palette.text.primary }}
+                          >
+                            <Box component="span" sx={{ fontWeight: "bold" }}>
+                              vs.
+                            </Box>{" "}
+                            {game.opponent}
+                          </Typography>
+                        </motion.div>
+                        <motion.div variants={textDetailVariants}>
+                          <Typography variant="body2" color="text.secondary">
+                            <Box component="span" sx={{ fontWeight: "bold" }}>
+                              League:
+                            </Box>{" "}
+                            {game.league_name}
+                          </Typography>
+                        </motion.div>
+                        <motion.div variants={textDetailVariants}>
+                          <Typography variant="body2" color="text.secondary">
+                            <Box component="span" sx={{ fontWeight: "bold" }}>
+                              Date:
+                            </Box>{" "}
+                            {formattedDate}
+                          </Typography>
+                        </motion.div>
+                        <motion.div variants={textDetailVariants}>
+                          <Typography variant="body2" color="text.secondary">
+                            <Box component="span" sx={{ fontWeight: "bold" }}>
+                              Time:
+                            </Box>{" "}
+                            {formattedTime}
+                          </Typography>
+                        </motion.div>
+                        <motion.div variants={textDetailVariants}>
+                          <Typography variant="body2" color="text.secondary">
+                            <Box component="span" sx={{ fontWeight: "bold" }}>
+                              Venue:
+                            </Box>{" "}
+                            {game.location}
+                          </Typography>
+                        </motion.div>
+                        <motion.div variants={textDetailVariants}>
+                          <Typography
+                            variant="subtitle1"
+                            component="div"
+                            sx={{
+                              mt: 1,
+                              color: isHomeGame
+                                ? theme.palette.primary.main
+                                : theme.palette.secondary.main,
+                            }}
+                          >
+                            {isHomeGame ? "HOME GAME" : "AWAY GAME"}
+                          </Typography>
+                        </motion.div>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          )}
+        </Box>
+      </ThemeProvider>
+      <Footer />
     </div>
-    
   );
-}
+};
 
 export default Schedule;

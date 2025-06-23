@@ -1,8 +1,11 @@
 import NavBar from "../components/Nav/NavBar"
-import { Box, Typography, Grid, Card, CardContent, Avatar } from '@mui/material';
+import { Box, Typography, Card, CardContent, Avatar, CircularProgress } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { motion } from 'framer-motion'; 
 import Footer from "../components/Footer";
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
 // Define a custom theme with orange and blue palette
 const theme = createTheme({
@@ -22,7 +25,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: 'Poppins, sans-serif',
     h4: {
       fontWeight: 800, 
       color: '#FF5722', 
@@ -80,62 +83,62 @@ const theme = createTheme({
   },
 });
 
-const teamRoster = [
-  {
-    id: 1,
-    name: 'LeBron James',
-    number: 23,
-    position: 'SF',
-    height: "6'9\"",
-    weight: '250 lbs',
-    avatar: 'https://placehold.co/150x150/FF5722/FFFFFF?text=LJ', // Orange avatar placeholder
-  },
-  {
-    id: 2,
-    name: 'Stephen Curry',
-    number: 30,
-    position: 'PG',
-    height: "6'2\"",
-    weight: '185 lbs',
-    avatar: 'https://placehold.co/150x150/2196F3/FFFFFF?text=SC', // Blue avatar placeholder
-  },
-  {
-    id: 3,
-    name: 'Kevin Durant',
-    number: 7,
-    position: 'PF',
-    height: "6'10\"",
-    weight: '240 lbs',
-    avatar: 'https://placehold.co/150x150/FF5722/FFFFFF?text=KD',
-  },
-  {
-    id: 4,
-    name: 'Nikola Jokic',
-    number: 15,
-    position: 'C',
-    height: "6'11\"",
-    weight: '284 lbs',
-    avatar: 'https://placehold.co/150x150/2196F3/FFFFFF?text=NJ',
-  },
-  {
-    id: 5,
-    name: 'Giannis Antetokounmpo',
-    number: 34,
-    position: 'PF',
-    height: "6'11\"",
-    weight: '243 lbs',
-    avatar: 'https://placehold.co/150x150/FF5722/FFFFFF?text=GA',
-  },
-  {
-    id: 6,
-    name: 'Luka Doncic',
-    number: 77,
-    position: 'SG',
-    height: "6'7\"",
-    weight: '230 lbs',
-    avatar: 'https://placehold.co/150x150/2196F3/FFFFFF?text=LD',
-  },
-];
+// const teamRoster = [
+//   {
+//     id: 1,
+//     name: 'LeBron James',
+//     number: 23,
+//     position: 'SF',
+//     height: "6'9\"",
+//     weight: '250 lbs',
+//     avatar: 'https://placehold.co/150x150/FF5722/FFFFFF?text=LJ', // Orange avatar placeholder
+//   },
+//   {
+//     id: 2,
+//     name: 'Stephen Curry',
+//     number: 30,
+//     position: 'PG',
+//     height: "6'2\"",
+//     weight: '185 lbs',
+//     avatar: 'https://placehold.co/150x150/2196F3/FFFFFF?text=SC', // Blue avatar placeholder
+//   },
+//   {
+//     id: 3,
+//     name: 'Kevin Durant',
+//     number: 7,
+//     position: 'PF',
+//     height: "6'10\"",
+//     weight: '240 lbs',
+//     avatar: 'https://placehold.co/150x150/FF5722/FFFFFF?text=KD',
+//   },
+//   {
+//     id: 4,
+//     name: 'Nikola Jokic',
+//     number: 15,
+//     position: 'C',
+//     height: "6'11\"",
+//     weight: '284 lbs',
+//     avatar: 'https://placehold.co/150x150/2196F3/FFFFFF?text=NJ',
+//   },
+//   {
+//     id: 5,
+//     name: 'Giannis Antetokounmpo',
+//     number: 34,
+//     position: 'PF',
+//     height: "6'11\"",
+//     weight: '243 lbs',
+//     avatar: 'https://placehold.co/150x150/FF5722/FFFFFF?text=GA',
+//   },
+//   {
+//     id: 6,
+//     name: 'Luka Doncic',
+//     number: 77,
+//     position: 'SG',
+//     height: "6'7\"",
+//     weight: '230 lbs',
+//     avatar: 'https://placehold.co/150x150/2196F3/FFFFFF?text=LD',
+//   },
+// ];
 
 // Framer Motion variants for staggered animation
 const containerVariants = {
@@ -169,8 +172,39 @@ const itemVariants = {
   },
 };
 
+const CLOUDINARY_CLOUD_NAME = "doairargz";
+
+type Player = {
+  id: number;
+  name: string;
+  jersey_number: number;
+  position: string;
+  height: string;
+  weight: string;
+  image?: string;
+};
 
 const Roster = () => {
+  const [teamRoster, setTeamRoster] = useState<Player[]>([]); // State to hold fetched player data
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState<string | null>(null); // Error state
+
+  useEffect(() => {
+    const fetchRoster = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/roster/'); 
+        setTeamRoster(response.data);
+      } catch (err) {
+        console.error("Error fetching roster:", err);
+        setError('Failed to load roster. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoster();
+  }, []);
+
   return (
     <div>
       <NavBar />
@@ -180,11 +214,12 @@ const Roster = () => {
             py: 8,
             px: { xs: 2, sm: 4, md: 8 },
             backgroundColor: "background.default",
-            minHeight: "100vh",
+            // minHeight: "100vh",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             gap: 6,
+            flexGrow: 1,
           }}
         >
           <Typography
@@ -196,123 +231,172 @@ const Roster = () => {
             Our Elite Roster
           </Typography>
 
-          <Grid
-            container
-            spacing={4}
-            justifyContent="center"
-            component={motion.div}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {teamRoster.map((player) => (
-              <Grid
-                item
-                key={player.id}
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-                sx={{ display: "flex" }}
-                component={motion.div}
-                variants={itemVariants}
-                whileHover="hover"
-              >
-                <Card
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    p: 3,
-                  }}
-                >
-                  {" "}
-                  {/* Increased padding */}
-                  <Avatar
-                    alt={player.name}
-                    src={player.avatar}
-                    imgProps={{
-                      onError: (e) => {
-                        e.target.src = `https://placehold.co/150x150/${
-                          player.id % 2 === 0 ? "2196F3" : "FF5722"
-                        }/FFFFFF?text=${
-                          player.name.charAt(0) +
-                          player.name.split(" ")[1].charAt(0)
-                        }`;
-                      },
-                    }}
-                    sx={{ mb: 2 }}
-                  />
-                  <CardContent
-                    sx={{ textAlign: "center", width: "100%", pt: 0 }}
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "300px",
+              }}
+            >
+              <CircularProgress color="primary" />
+              <Typography variant="h6" sx={{ ml: 2, color: "text.secondary" }}>
+                Loading Players...
+              </Typography>
+            </Box>
+          ) : error ? (
+            <Typography variant="h6" color="error" sx={{ textAlign: "center" }}>
+              {error}
+            </Typography>
+          ) : teamRoster.length === 0 ? (
+            <Typography
+              variant="h6"
+              sx={{ textAlign: "center", color: "text.secondary" }}
+            >
+              No players found on the roster.
+            </Typography>
+          ) : (
+            <Grid
+              container
+              spacing={4}
+              justifyContent="center"
+              component={motion.div}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {teamRoster.map((player) => {
+                // Construct the full Cloudinary URL
+                const fullCloudinaryUrl = player.image
+                  ? `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/${player.image}`
+                  : null; // Set to null if no image path
+
+                return (
+                  <Grid size= {{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                    key={player.id}
+                    sx={{ display: "flex" }}
                   >
-                    {" "}
-                    {/* Padding top removed, added to Card */}
-                    <Typography
-                      variant="subtitle1"
-                      component="div"
-                      sx={{ mb: 1 }}
+                    <motion.div
+                      variants={itemVariants}
+                      whileHover="hover"
+                      style={{ width: "100%", display: "flex" }}
                     >
-                      #{player.number}
-                    </Typography>
-                    <Typography variant="h6" component="div" sx={{ mb: 1.5 }}>
-                      {player.name}
-                    </Typography>
-                    {/* Player details section */}
-                    <Box
-                      sx={{
-                        mt: 2,
-                        pt: 2,
-                        borderTop: "1px solid #e0e0e0",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "8px",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography variant="body2">
-                        <Box
-                          component="span"
-                          sx={{
-                            fontWeight: "bold",
-                            color: theme.palette.text.secondary,
+                      <Card
+                        sx={{
+                          width: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          p: 3,
+                        }}
+                      >
+                        <Avatar
+                          alt={player.name}
+                          // Use the constructed fullCloudinaryUrl
+                          src={
+                            fullCloudinaryUrl ||
+                            `https://placehold.co/150x150/${
+                              player.jersey_number % 2 === 0
+                                ? "2196F3"
+                                : "FF5722"
+                            }/FFFFFF?text=${
+                              player.name.charAt(0) +
+                              (player.name.split(" ").length > 1
+                                ? player.name.split(" ")[1].charAt(0)
+                                : "")
+                            }`
+                          }
+                          imgProps={{
+                            onError: (e) => {
+                              (e.target as HTMLImageElement).src = `https://placehold.co/150x150/${
+                                player.jersey_number % 2 === 0
+                                  ? "2196F3"
+                                  : "FF5722"
+                              }/FFFFFF?text=${
+                                player.name.charAt(0) +
+                                (player.name.split(" ").length > 1
+                                  ? player.name.split(" ")[1].charAt(0)
+                                  : "")
+                              }`;
+                            },
                           }}
+                          sx={{ mb: 2 }}
+                        />
+                        <CardContent
+                          sx={{ textAlign: "center", width: "100%", pt: 0 }}
                         >
-                          Position:
-                        </Box>{" "}
-                        {player.position}
-                      </Typography>
-                      <Typography variant="body2">
-                        <Box
-                          component="span"
-                          sx={{
-                            fontWeight: "bold",
-                            color: theme.palette.text.secondary,
-                          }}
-                        >
-                          Height:
-                        </Box>{" "}
-                        {player.height}
-                      </Typography>
-                      <Typography variant="body2">
-                        <Box
-                          component="span"
-                          sx={{
-                            fontWeight: "bold",
-                            color: theme.palette.text.secondary,
-                          }}
-                        >
-                          Weight:
-                        </Box>{" "}
-                        {player.weight}
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                          {/* ... rest of your player details ... */}
+                          <Typography
+                            variant="subtitle1"
+                            component="div"
+                            sx={{ mb: 1 }}
+                          >
+                            #{player.jersey_number}
+                          </Typography>
+                          <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{ mb: 1.5 }}
+                          >
+                            {player.name}
+                          </Typography>
+                          <Box
+                            sx={{
+                              mt: 2,
+                              pt: 2,
+                              borderTop: "1px solid #e0e0e0",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "8px",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Typography variant="body2">
+                              <Box
+                                component="span"
+                                sx={{
+                                  fontWeight: "bold",
+                                  color: theme.palette.text.secondary,
+                                }}
+                              >
+                                Position:
+                              </Box>{" "}
+                              {player.position}
+                            </Typography>
+                            <Typography variant="body2">
+                              <Box
+                                component="span"
+                                sx={{
+                                  fontWeight: "bold",
+                                  color: theme.palette.text.secondary,
+                                }}
+                              >
+                                Height:
+                              </Box>{" "}
+                              {player.height}
+                            </Typography>
+                            <Typography variant="body2">
+                              <Box
+                                component="span"
+                                sx={{
+                                  fontWeight: "bold",
+                                  color: theme.palette.text.secondary,
+                                }}
+                              >
+                                Weight:
+                              </Box>{" "}
+                              {player.weight}
+                            </Typography>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          )}
         </Box>
       </ThemeProvider>
       <Footer />
