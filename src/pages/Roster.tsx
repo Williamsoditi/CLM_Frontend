@@ -386,7 +386,7 @@ const Roster = () => {
                               >
                                 Weight:
                               </Box>{" "}
-                              {player.weight}
+                              {player.weight} kgs
                             </Typography>
                           </Box>
                         </CardContent>

@@ -1,15 +1,16 @@
 import { MdMenu } from "react-icons/md";
 import logo from "../../assets/logo.png";
 import { NavBarMenu } from "../../MockData/NavData"; // Ensure this path is correct
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ResponsiveMenu from "./ResponsiveMenu";
 import Banner from "./Banner";
 import { motion } from "framer-motion"; // Correct import for framer-motion
 import { Link } from "react-router-dom"; // IMPORTANT: Import Link for internal routing
-
+import axios from "axios";
 const NavBar = () => {
 
   const [isOpen, setIsOpen] = useState(false);
+  
 
   // Function to toggle the menu open/close state
   const toggleMenu = () => {

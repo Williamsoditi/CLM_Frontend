@@ -29,12 +29,6 @@ export const NavBarMenu = [
         title: "Contact",
         link: "/contact",
     },
-    {
-        id: 7,
-        title: "Admin",
-        link: "http://127.0.0.1:8000/admin/",
-        target: "_blank",
-        rel: "noopener noreferrer",
-    },
+    
 ];
 
