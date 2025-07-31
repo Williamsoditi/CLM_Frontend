@@ -83,62 +83,6 @@ const theme = createTheme({
   },
 });
 
-// const teamRoster = [
-//   {
-//     id: 1,
-//     name: 'LeBron James',
-//     number: 23,
-//     position: 'SF',
-//     height: "6'9\"",
-//     weight: '250 lbs',
-//     avatar: 'https://placehold.co/150x150/FF5722/FFFFFF?text=LJ', // Orange avatar placeholder
-//   },
-//   {
-//     id: 2,
-//     name: 'Stephen Curry',
-//     number: 30,
-//     position: 'PG',
-//     height: "6'2\"",
-//     weight: '185 lbs',
-//     avatar: 'https://placehold.co/150x150/2196F3/FFFFFF?text=SC', // Blue avatar placeholder
-//   },
-//   {
-//     id: 3,
-//     name: 'Kevin Durant',
-//     number: 7,
-//     position: 'PF',
-//     height: "6'10\"",
-//     weight: '240 lbs',
-//     avatar: 'https://placehold.co/150x150/FF5722/FFFFFF?text=KD',
-//   },
-//   {
-//     id: 4,
-//     name: 'Nikola Jokic',
-//     number: 15,
-//     position: 'C',
-//     height: "6'11\"",
-//     weight: '284 lbs',
-//     avatar: 'https://placehold.co/150x150/2196F3/FFFFFF?text=NJ',
-//   },
-//   {
-//     id: 5,
-//     name: 'Giannis Antetokounmpo',
-//     number: 34,
-//     position: 'PF',
-//     height: "6'11\"",
-//     weight: '243 lbs',
-//     avatar: 'https://placehold.co/150x150/FF5722/FFFFFF?text=GA',
-//   },
-//   {
-//     id: 6,
-//     name: 'Luka Doncic',
-//     number: 77,
-//     position: 'SG',
-//     height: "6'7\"",
-//     weight: '230 lbs',
-//     avatar: 'https://placehold.co/150x150/2196F3/FFFFFF?text=LD',
-//   },
-// ];
 
 // Framer Motion variants for staggered animation
 const containerVariants = {

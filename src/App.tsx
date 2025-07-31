@@ -7,6 +7,7 @@ import Roster from './pages/Roster'
 import Schedule from './pages/Schedule'
 import NotFound from './pages/NotFound'
 import News from './pages/News'
+import Result from './pages/Result'
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
       <Route path="/schedule" element={<Schedule />} />
       <Route path="/news" element={<News />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/results" element={<Result />} />
       {/* Wildcard route for 404 Not Found pages */}
       <Route path="*" element={<NotFound />} />
     </Routes>
