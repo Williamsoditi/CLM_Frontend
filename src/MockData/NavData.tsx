@@ -19,19 +19,23 @@ export const NavBarMenu = [
         title: "Schedule",
         link: "/schedule",
     },
-     {
+    {
+
         id: 5,
+        title: "Results",
+        link: "/results",
+    
+    },
+     {
+        id: 6,
         title: "News",
         link: "/news",
     },
      {
-        id: 6,
+        id: 7,
         title: "Contact",
         link: "/contact",
     },
-    // {
-    //     id: 7,
-    //     title: "Admin",
-    //     link: "/admin",
-    // },
+    
 ];
+
