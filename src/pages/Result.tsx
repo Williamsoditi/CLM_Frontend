@@ -265,7 +265,7 @@ const Result = () => {
             gutterBottom
             sx={{ mb: 6 }}
           >
-            Latest Match Results
+           Match Results
           </Typography>
 
           {results.length === 0 ? (

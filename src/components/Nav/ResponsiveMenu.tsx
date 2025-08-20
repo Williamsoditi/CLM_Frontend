@@ -1,29 +1,28 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { NavBarMenu } from "../../MockData/NavData"; 
-import { MdClose } from "react-icons/md"; // Import a close icon
+import { NavBarMenu } from "../../MockData/NavData";
+import { MdClose } from "react-icons/md"; 
 
 // Define the props interface
 interface ResponsiveMenuProps {
   isOpen: boolean;
-  onClose: () => void; // Expecting a function to close the menu
+  onClose: () => void; 
 }
 
 const ResponsiveMenu: React.FC<ResponsiveMenuProps> = ({ isOpen, onClose }) => {
   return (
     <AnimatePresence mode="wait">
-      {/* Conditionally render the motion.div based on isOpen */}
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -100 }} // Starts above and invisible
-          animate={{ opacity: 1, y: 0 }} // Slides down and fades in
-          exit={{ opacity: 0, y: -100 }} // Slides up and fades out on exit
+          initial={{ opacity: 0, x: "100%" }} 
+          animate={{ opacity: 1, x: 0 }} 
+          exit={{ opacity: 0, x: "100%" }} 
           transition={{ duration: 0.3 }}
-          // Styling for the overlay/container of the mobile menu
           className="top-20 left-0 w-full min-h-[calc(100vh-5rem)] bg-white z-20 overflow-y-auto lg:hidden"
         >
           {/* Menu content container */}
           <div
-            className=" text-xl font-semibold uppercase bg-gradient-to-br from-primary-darker to-blue-900 text-white py-12 m-4 rounded-3xl relative shadow-2xl overflow-hidden ">
+            className="text-xl font-semibold uppercase bg-gradient-to-br from-primary-darker to-blue-900 text-white py-12 m-4 rounded-3xl relative shadow-2xl overflow-hidden"
+          >
             {/* Close Button */}
             <button
               onClick={onClose}
@@ -36,7 +35,6 @@ const ResponsiveMenu: React.FC<ResponsiveMenuProps> = ({ isOpen, onClose }) => {
             <ul className="flex flex-col justify-center items-center gap-8">
               {NavBarMenu.map((item) => (
                 <li key={item.id}>
-                  {/* Clicking a link should also close the menu */}
                   <a href={item.link} onClick={onClose}>
                     {item.title}
                   </a>
