@@ -27,11 +27,13 @@ const theme = createTheme({
   typography: {
     fontFamily: 'Poppins, sans-serif',
     h4: {
+      fontFamily: 'Raleway, sans-serif',
       fontWeight: 800, 
       color: '#FF5722', 
       textShadow: '2px 2px 4px rgba(0,0,0,0.1)', 
     },
     h6: {
+      fontFamily: 'Raleway, sans-serif',
       fontWeight: 700, 
       color: '#2196F3', 
       letterSpacing: '0.02em', 
@@ -119,12 +121,12 @@ const itemVariants = {
 const CLOUDINARY_CLOUD_NAME = "doairargz";
 
 type Player = {
+  height: number;
+  weight: number;
   id: number;
   name: string;
   jersey_number: number;
   position: string;
-  height: string;
-  weight: string;
   image?: string;
 };
 

@@ -43,6 +43,7 @@ const theme = createTheme({
   typography: {
     fontFamily: 'Poppins, sans-serif',
     h3: {
+      fontFamily: 'Raleway, sans-serif',
       fontWeight: 700,
       color: '#FF5722',
       marginBottom: '1rem',
@@ -52,6 +53,7 @@ const theme = createTheme({
       },
     },
     h4: {
+      fontFamily: 'Raleway, sans-serif',
       fontWeight: 600,
       color: '#1976D2',
       marginBottom: '0.75rem',
@@ -63,6 +65,7 @@ const theme = createTheme({
       },
     },
     h5: {
+      fontFamily: 'Raleway, sans-serif',
       fontWeight: 600,
       color: '#212121',
       marginBottom: '0.5rem',
@@ -154,11 +157,6 @@ interface TeamMember {
 }
 
 const teamMembers: TeamMember[] = [
-  {
-    name: 'Joan Njoki',
-    role: 'Team Manager',
-    imageUrl: 'https://via.placeholder.com/150/1976D2/FFFFFF?text=Maya', // Placeholder for demo
-  },
   {
     name: 'Duke Mairura',
     role: 'Team Captain',

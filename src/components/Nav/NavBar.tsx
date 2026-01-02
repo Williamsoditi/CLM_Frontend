@@ -30,7 +30,7 @@ const NavBar = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.5 }}
       >
-        <div className="bg-gradient-to-r from-black/70 to-gray-700/50 z-20 sticky top-0 backdrop-blur-md">
+        <div className="bg-[#1a202c] z-20 sticky top-0 backdrop-blur-md">
           <nav className="flex justify-between items-center py-1 mx-auto container top-0 z-50 w-full">
             {/* LOGO SECTION */}
             <div className="container flex justify-between items-center py-3">
@@ -116,21 +116,23 @@ const NavBar = () => {
             </div>
 
             {/* CTA button */}
-            <div className="hidden lg:block mx-5">
+            {/* <div className="hidden lg:block mx-5">
               <button
-                className=" bg-primary
-              hover:bg-primary-darker
+                className="
+              bg-[#000080]
+              hover:bg-[#000066]
               text-white
               font-semibold
               px-8 py-3
               rounded-full
               shadow-lg
               transition-all duration-300
-              transform hover:scale-105"
+              transform hover:scale-105
+            "
               >
                 Discover
               </button>
-            </div>
+            </div> */}
 
             {/* Mobile Hamburger Menu */}
             <div className="lg:hidden px-4" onClick={toggleMenu}> {/* Using the toggleMenu function */}

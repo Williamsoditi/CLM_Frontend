@@ -26,6 +26,7 @@ const theme = createTheme({
   typography: {
     fontFamily: 'Poppins, sans-serif',
     h6: {
+      fontFamily: 'Raleway, sans-serif',
       fontWeight: 700,
       color: '#FF5722', 
       marginBottom: '1rem',
@@ -115,7 +116,7 @@ const Footer = () => {
                 </li>
                 <li style={{ marginBottom: '0.5rem' }}>
                   <Link href="/roster" color="inherit" underline="none" variant="subtitle1">
-                    Team Roster
+                    Roster
                   </Link>
                 </li>
                 <li style={{ marginBottom: '0.5rem' }}>
@@ -174,9 +175,12 @@ const Footer = () => {
               </Typography>
               <Typography variant="body2">
                 <Box component="span" sx={{ fontWeight: 'bold' }}>Phone:</Box>{' '}
-                <Link href="tel:+1234567890" color="inherit" underline="hover">
-                  +1 (234) 567-890
-                </Link>
+                <Link href="tel:+254720385879" color="inherit" underline="hover">
+                  0720385879
+                </Link><br />
+                {/* <Link href="tel:+254798550084" color="inherit" underline="hover">
+                  0798550084
+                </Link> */}
               </Typography>
             </motion.div>
           </Grid>

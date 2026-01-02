@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import NavBar from "../components/Nav/NavBar"; 
-import { motion } from "framer-motion"; 
-import logo from "../../src/assets/logo.png"; 
+import NavBar from "../components/Nav/NavBar";
+import { motion } from "framer-motion";
+import logo from "../../src/assets/logo.png";
 import Footer from "../components/Footer";
-
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +11,7 @@ const Contact = () => {
     email: "",
     phoneNumber: "",
     message: "",
+    honeypot: "", // Hidden field for bot detection
   });
 
   type FormFields =
@@ -60,7 +60,14 @@ const Contact = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
+
+    // 1. HONEYPOT CHECK: If the hidden field is filled, ignore the bot
+    if (formData.honeypot) {
+      console.warn("Bot detected.");
+      setSubmitMessage("Your message has been sent successfully!"); // Lie to the bot
+      return;
+    }
 
     if (!validate()) {
       setSubmitMessage("Please correct the errors before submitting.");
@@ -71,23 +78,39 @@ const Contact = () => {
     setSubmitMessage("");
 
     try {
-      // Simulate API call or form submission
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Form Data Submitted:", formData);
-      setSubmitMessage("Your message has been sent successfully!");
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        message: "",
-      }); 
-      setErrors({});
+      // REPLACE 'YOUR_FORM_ID' with your actual Formspree ID
+      // WILL CHANGE THIS TO THE CLIQUE MAMBAS FORMSPREE ID WHEN SET UP
+      const response = await fetch("https://formspree.io/f/xaqnegob", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phoneNumber,
+          message: formData.message,
+        }),
+      });
+
+      if (response.ok) {
+        setSubmitMessage("Your message has been sent successfully!");
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phoneNumber: "",
+          message: "",
+          honeypot: "",
+        });
+        setErrors({});
+      } else {
+        throw new Error("Submission failed.");
+      }
     } catch (error) {
-      console.error("Submission error:", error);
-      setSubmitMessage(
-        "There was an error sending your message. Please try again."
-      );
+      setSubmitMessage("Error sending message. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -116,7 +139,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f2f6]">
-      <NavBar /> 
+      <NavBar />
       <div className="flex-grow flex items-center justify-center py-10">
         <motion.div
           className="flex flex-col md:flex-row bg-white rounded-lg shadow-xl overflow-hidden max-w-6xl w-full mx-4 md:mx-auto"
@@ -125,7 +148,7 @@ const Contact = () => {
           animate="visible"
         >
           {/* Left Section: "We'd love to hear from you" */}
-          <div className="w-full md:w-1/2 bg-gradient-to-r from-black/70 to-gray-700/50 text-white p-8 md:p-16 flex flex-col justify-between relative overflow-hidden">
+          <div className="w-full md:w-1/2 bg-gradient-to-r from-[#1a202c] to-gray-950/70 text-white p-8 md:p-16 flex flex-col justify-between relative overflow-hidden">
             {/* Top-left logo */}
             <motion.div
               className="absolute top-4 left-4 md:top-8 md:left-8"

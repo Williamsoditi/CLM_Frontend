@@ -15,6 +15,16 @@ import NavBar from "../components/Nav/NavBar";
 import Footer from "../components/Footer";
 import { styled } from "@mui/material/styles";
 
+// 💡 NEW ICON IMPORTS
+import SportsBasketballIcon from '@mui/icons-material/SportsSoccer'; // For League
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // For Date
+import AccessTimeIcon from '@mui/icons-material/AccessTime'; // For Time
+import LocationOnIcon from '@mui/icons-material/LocationOn'; // For Location/Venue
+
+// ... (HeaderBox, theme, and Framer Motion variants remain the same) ...
+/* // ... Your existing HeaderBox, theme, and Framer Motion variants here ... 
+*/
+
 const HeaderBox = styled(Box)(({ theme }) => ({
   borderRadius: 18,
   padding: theme.spacing(4, 2),
@@ -30,7 +40,7 @@ const theme = createTheme({
       main: "#FF5722",
     },
     secondary: {
-      main: "#2196F3",
+      main: "#000080",
     },
     background: {
       default: "#f1f2f6",
@@ -44,6 +54,7 @@ const theme = createTheme({
   typography: {
     fontFamily: "Poppins, sans-serif",
     h4: {
+      fontFamily: "Raleway, sans-serif",
       fontWeight: 800,
       color: "#FF5722",
       textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
@@ -53,6 +64,7 @@ const theme = createTheme({
       },
     },
     h6: {
+      fontFamily: "Raleway, sans-serif",
       fontWeight: 700,
       color: "#2196F3",
       letterSpacing: "0.02em",
@@ -154,7 +166,7 @@ type Schedule = {
   league_name: string;
 };
 
-const Schedule = () => {
+const ScheduleComponent = () => { // Renamed from Schedule to ScheduleComponent to avoid conflict with the type
   const [schedule, setSchedule] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -209,7 +221,7 @@ const Schedule = () => {
               >
                 Upcoming Games
               </Typography>
-              <Typography variant="h6" sx={{ color: "#FF5722" }}>
+              <Typography variant="h6" sx={{ color: "#FF5721" }}>
                 Don't miss any action!
               </Typography>
             </HeaderBox>
@@ -305,11 +317,12 @@ const Schedule = () => {
                         borderTop: `5px solid ${
                           isHomeGame
                             ? theme.palette.primary.main
-                            : theme.palette.secondary.main
+                            : "ffffff"
                         }`,
                         background: isHomeGame
                           ? "linear-gradient(145deg, #fff3e0, #ffeddb)"
-                          : "linear-gradient(145deg, #e3f2fd, #d0efff)",
+                          : "linear-gradient(145deg, #000080, #000066)",
+                        color: isHomeGame ? "inherit" : "#ffffff",
                       }}
                     >
                       <CardContent
@@ -325,11 +338,12 @@ const Schedule = () => {
                         initial="hidden"
                         animate="visible"
                       >
+                        {/* Opponent (vs. [Opponent Name]) */}
                         <motion.div variants={textDetailVariants}>
                           <Typography
                             variant="h6"
                             component="div"
-                            sx={{ mb: 0.5, color: theme.palette.text.primary }}
+                            sx={{ mb: 0.5, color: isHomeGame ? "text.primary" : "#ffffff" }}
                           >
                             <Box component="span" sx={{ fontWeight: "bold" }}>
                               vs.
@@ -337,47 +351,55 @@ const Schedule = () => {
                             {game.opponent}
                           </Typography>
                         </motion.div>
+                        
+                        {/* League */}
                         <motion.div variants={textDetailVariants}>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: isHomeGame ? 'text.secondary' : '#dddddd' }}>
+                            <SportsBasketballIcon sx={{ mr: 1, fontSize: '1.1em', color: "ffffff" }} />
                             <Box component="span" sx={{ fontWeight: "bold" }}>
-                              League:
-                            </Box>{" "}
-                            {game.league_name}
+                              {game.league_name}
+                            </Box>
                           </Typography>
                         </motion.div>
+                        
+                        {/* Date */}
                         <motion.div variants={textDetailVariants}>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: isHomeGame ? 'text.secondary' : '#dddddd' }}>
+                            <CalendarTodayIcon sx={{ mr: 1, fontSize: '1.1em', color: "ffffff" }} />
                             <Box component="span" sx={{ fontWeight: "bold" }}>
-                              Date:
-                            </Box>{" "}
-                            {formattedDate}
+                              {formattedDate}
+                            </Box>
                           </Typography>
                         </motion.div>
+                        
+                        {/* Time */}
                         <motion.div variants={textDetailVariants}>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: isHomeGame ? 'text.secondary' : '#ffffff' }}>
+                            <AccessTimeIcon sx={{ mr: 1, fontSize: '1.1em', color: "ffffff" }} />
                             <Box component="span" sx={{ fontWeight: "bold" }}>
-                              Time:
-                            </Box>{" "}
-                            {formattedTime}
+                              {formattedTime}
+                            </Box>
                           </Typography>
                         </motion.div>
+
+                        {/* Venue/Location */}
                         <motion.div variants={textDetailVariants}>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: isHomeGame ? 'text.secondary' : '#ffffff' }}>
+                            <LocationOnIcon sx={{ mr: 1, fontSize: '1.1em', color: "ffffff" }} />
                             <Box component="span" sx={{ fontWeight: "bold" }}>
-                              Venue:
-                            </Box>{" "}
-                            {game.location}
+                              {game.location}
+                            </Box>
                           </Typography>
                         </motion.div>
+                        
+                        {/* HOME/AWAY Status */}
                         <motion.div variants={textDetailVariants}>
                           <Typography
                             variant="subtitle1"
                             component="div"
                             sx={{
                               mt: 1,
-                              color: isHomeGame
-                                ? theme.palette.primary.main
-                                : theme.palette.secondary.main,
+                              color: isHomeGame ? "text.primary" : "#ffffff"
                             }}
                           >
                             {isHomeGame ? "HOME GAME" : "AWAY GAME"}
@@ -397,4 +419,4 @@ const Schedule = () => {
   );
 };
 
-export default Schedule;
+export default ScheduleComponent;

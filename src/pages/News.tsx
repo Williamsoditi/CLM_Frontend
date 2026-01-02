@@ -35,11 +35,13 @@ const theme = createTheme({
     typography: {
         fontFamily: 'Poppins, sans-serif',
         h4: {
+            fontFamily: 'Raleway, sans-serif',
             fontWeight: 800,
             color: '#FF5722',
             textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
         },
         h6: {
+            fontFamily: 'Raleway, sans-serif',
             fontWeight: 700,
             color: '#2196F3',
             letterSpacing: '0.02em',
@@ -161,7 +163,7 @@ const News = () => {
                         gutterBottom
                         sx={{ textAlign: 'center' }}
                     >
-                        Latest News
+                        Stay on the Loop with Us...
                     </Typography>
 
                     {loading ? (

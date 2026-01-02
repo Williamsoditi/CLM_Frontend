@@ -56,8 +56,8 @@ const Hero = () => {
             <Link
               to="/roster"
               className="
-              bg-primary
-              hover:bg-primary-darker
+              bg-[#000080]
+              hover:bg-[#000066]
               text-white
               font-semibold
               px-8 py-3
@@ -73,17 +73,18 @@ const Hero = () => {
               to="/schedule"
               className="
               bg-transparent
-              border-2 border-white
-              hover:border-primary
-              hover:bg-primary
+              border-2 border-[#000080]
               text-white
+              hover:bg-[#000080]
+              hover:text-white
               font-semibold
               px-8 py-3
               rounded-full
-              shadow-lg
+              shadow-md hover:shadow-[#000080]/50
               transition-all duration-300
               transform hover:scale-105
-            "
+              backdrop-blur-sm
+              "
             >
               View Schedule
             </Link>
@@ -92,7 +93,7 @@ const Hero = () => {
           <div className="flex justify-start items-center gap-6 mt-10 z-20 flex-wrap sm:justify-start lg:justify-start ">
             {/* Instagram Icon */}
             <a
-              href="https://www.instagram.com/cliquemambas/" 
+              href="https://www.instagram.com/cliquemambas/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
@@ -102,14 +103,13 @@ const Hero = () => {
             </a>
 
             {/* Gmail/Email Icon - NEW ADDITION */}
-          <a
-            href="mailto:Cliquemambas1960@gmail.com" 
-            aria-label="Email"
-            className="text-white hover:text-red-500 transition-transform duration-300 transform hover:scale-125" 
-          >
-            <FaEnvelope className="text-3xl" />
-          </a>
-            
+            <a
+              href="mailto:Cliquemambas1960@gmail.com"
+              aria-label="Email"
+              className="text-white hover:text-red-500 transition-transform duration-300 transform hover:scale-125"
+            >
+              <FaEnvelope className="text-3xl" />
+            </a>
           </div>
         </div>
       </section>

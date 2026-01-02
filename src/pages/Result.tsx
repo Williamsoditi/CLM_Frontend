@@ -37,12 +37,14 @@ let theme = createTheme({
   typography: {
     fontFamily: 'Poppins, sans-serif',
     h3: {
+      fontFamily: 'Raleway, sans-serif',
       fontWeight: 800,
       color: '#FF5722',
       textShadow: '3px 3px 6px rgba(0,0,0,0.15)',
       marginBottom: '1rem',
     },
     h5: {
+      fontFamily: 'Raleway, sans-serif',
       fontWeight: 700,
       color: '#2196F3',
       letterSpacing: '0.03em',
