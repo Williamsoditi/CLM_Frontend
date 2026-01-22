@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 import NavBar from '../components/Nav/NavBar';
 import Footer from '../components/Footer';
 import {
@@ -128,7 +128,9 @@ const News = () => {
     useEffect(() => {
         const fetchNews = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/news/');
+                // 2. USE axiosInstance and REMOVE 'http://localhost:8000/api/'
+                // The instance already has the base URL, so we just need 'news/'
+                const response = await axiosInstance.get('news/');
                 setNews(response.data);
             } catch (err) {
                 setError('Failed to fetch news. Please try again later.');

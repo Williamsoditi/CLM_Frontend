@@ -173,15 +173,15 @@ const Footer = () => {
                   Cliquemambas1960@gmail.com
                 </Link>
               </Typography>
-              <Typography variant="body2">
+              {/* <Typography variant="body2">
                 <Box component="span" sx={{ fontWeight: 'bold' }}>Phone:</Box>{' '}
                 <Link href="tel:+254720385879" color="inherit" underline="hover">
                   0720385879
                 </Link><br />
-                {/* <Link href="tel:+254798550084" color="inherit" underline="hover">
+                <Link href="tel:+254798550084" color="inherit" underline="hover">
                   0798550084
-                </Link> */}
-              </Typography>
+                </Link>
+              </Typography> */}
             </motion.div>
           </Grid>
         </Grid>

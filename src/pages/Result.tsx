@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import NavBar from '../components/Nav/NavBar';
 import Footer from '../components/Footer';
+import axiosInstance from '../api/axiosInstance';
 
 // Define a custom theme with orange and blue palette
 let theme = createTheme({
@@ -174,13 +175,10 @@ const Result = () => {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/results/");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Result[] = await response.json();
+        const response = await axiosInstance.get("results/");
         
-        setResults(data);
+        
+        setResults(response.data);
       } catch (err) {
         console.error("Failed to fetch results:", err);
         setError(

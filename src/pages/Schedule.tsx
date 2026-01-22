@@ -20,7 +20,7 @@ import SportsBasketballIcon from '@mui/icons-material/SportsSoccer'; // For Leag
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // For Date
 import AccessTimeIcon from '@mui/icons-material/AccessTime'; // For Time
 import LocationOnIcon from '@mui/icons-material/LocationOn'; // For Location/Venue
-
+import axiosInstance from "../api/axiosInstance";
 // ... (HeaderBox, theme, and Framer Motion variants remain the same) ...
 /* // ... Your existing HeaderBox, theme, and Framer Motion variants here ... 
 */
@@ -174,13 +174,9 @@ const ScheduleComponent = () => { // Renamed from Schedule to ScheduleComponent 
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
+        const response = await axiosInstance.get('schedule/');
         // IMPORTANT: Replace with your actual Django API endpoint
-        const response = await fetch("http://localhost:8000/api/schedule/"); // Adjust port/domain if necessary
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Schedule[] = await response.json();
-        setSchedule(data);
+        setSchedule(response.data);
       } catch (err) {
         console.error("Failed to fetch schedule:", err);
         setError(

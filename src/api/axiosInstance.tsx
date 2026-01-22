@@ -5,7 +5,9 @@ import axios from 'axios';
 const axiosInstance = axios.create({
   // **IMPORTANT: Replace with your actual Django API base URL**
   // This should be the address where your Django backend is running.
-  baseURL: 'http://localhost:8000/api/',
+  baseURL: import.meta.env.VITE_API_URL 
+    ? `${import.meta.env.VITE_API_URL}/api/` 
+    : 'http://localhost:8000/api/',  
   timeout: 5000, // Request timeout in milliseconds
   headers: {
     'Content-Type': 'application/json',

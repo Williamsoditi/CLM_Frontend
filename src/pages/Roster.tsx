@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { motion } from 'framer-motion'; 
 import Footer from "../components/Footer";
-import axios from 'axios';
+import axiosInstance from "../api/axiosInstance";
 import { useState, useEffect } from 'react';
 
 // Define a custom theme with orange and blue palette
@@ -138,7 +138,7 @@ const Roster = () => {
   useEffect(() => {
     const fetchRoster = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/roster/'); 
+        const response = await axiosInstance.get('roster/');
         setTeamRoster(response.data);
       } catch (err) {
         console.error("Error fetching roster:", err);
