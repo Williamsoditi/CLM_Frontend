@@ -176,10 +176,10 @@ const teamMembers: TeamMember[] = [
 
 // Images for the carousel
 const carouselImages: string[] = [
-  'src/assets/2.jpg',
-  'src/assets/3.jpg',
-  'src/assets/4.jpg',
-  'src/assets/1.jpg',
+  '/2.jpg',
+  '/3.jpg',
+  '/4.jpg',
+  '/1.jpg',
 ];
 
 // Motion variants for fade-in effect
