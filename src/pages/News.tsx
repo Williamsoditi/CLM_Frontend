@@ -8,11 +8,11 @@ import {
     Card,
     CardContent,
     CardMedia, // Import CardMedia for images
-    Grid,
     CircularProgress,
     ThemeProvider,
     createTheme,
 } from '@mui/material';
+import Grid from "@mui/material/GridLegacy";
 import { motion } from 'framer-motion';
 
 // Define a custom theme with orange and blue palette
@@ -67,7 +67,7 @@ const theme = createTheme({
                     height: '100%',
                     // Adjustments for horizontal layout:
                     display: 'flex',
-                    flexDirection: { xs: 'column', sm: 'row' }, // Stack on small, row on medium+
+                    flexDirection: 'row', // Stack on small, row on medium+
                     maxWidth: 'none', // Remove fixed max-width to let it expand
                     width: '100%', // Ensure it takes full width of its grid item
                     // Remove `alignItems: 'center'` from previous roster card styles
@@ -214,9 +214,9 @@ const News = () => {
                                     <Grid
                                         item
                                         key={article.id}
-                                        xs={12} // Full width on small screens
-                                        md={10} // Wider on medium screens
-                                        lg={8}  // Even wider on large screens for horizontal cards
+                                        xs={12}
+                                        md={10}
+                                        lg={8}
                                         sx={{ display: 'flex' }}
                                     >
                                         <motion.div
@@ -224,7 +224,15 @@ const News = () => {
                                             whileHover="hover"
                                             style={{ width: '100%', display: 'flex' }}
                                         >
-                                            <Card sx={{ width: '100%' }}>
+                                            <Card
+                                              sx={{
+                                                width: '100%',
+                                                flexDirection: {
+                                                  xs: 'column',
+                                                  sm: 'row',
+                                                },
+                                              }}
+                                            >
                                                 {/* Card Media for Image */}
                                                 <CardMedia
                                                     component="img"

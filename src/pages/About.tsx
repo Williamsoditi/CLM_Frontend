@@ -3,7 +3,6 @@ import {
   Container,
   Typography,
   Box,
-  Grid,
   Card,
   CardContent,
   Avatar,
@@ -11,6 +10,7 @@ import {
   IconButton,
   Stack, // Import Stack for easy spacing and alignment
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
