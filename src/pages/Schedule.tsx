@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import {
   Box,
   Typography,
-  Grid,
   Card,
   CardContent,
   CircularProgress,
   Alert,
   Container,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import NavBar from "../components/Nav/NavBar";
@@ -297,7 +297,7 @@ const ScheduleComponent = () => { // Renamed from Schedule to ScheduleComponent 
 
                 return (
                   <Grid
-                    item // Changed 'size' to 'item' and added responsive props
+                    item
                     xs={12}
                     sm={6}
                     md={4}
