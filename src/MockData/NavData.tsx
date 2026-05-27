@@ -1,3 +1,13 @@
+type NavItem = {
+    id: number;
+    title: string;
+    link: string;
+    target?: string; // Optional property for external links
+    rel?: string;    // Optional property for external links
+};
+
+
+
 export const NavBarMenu = [
      {
         id: 1,
@@ -36,13 +46,15 @@ export const NavBarMenu = [
         link: "/news",
 
         //Gallery will come in this page, with photos and videos from games, practices, and team events. This will help fans feel more connected to the team and give them a behind-the-scenes look at what it's like to be part of the team.
+
+        //Needs API calls to fetch news articles, photos, and videos from the team's social media accounts and other sources. This will help keep fans up-to-date on the latest news and events related to the team, and encourage them to engage with the team on social media.
     },
-    {
-        id: 7,
-        title: "Community",
-        link: "/community",
-        // This page will have a list of local businesses that support the team, as well as a calendar of local events that the team will be participating in.
-    },
+    // {
+    //     id: 7,
+    //     title: "Community",
+    //     link: "/community",
+    //     // This page will have a list of local businesses that support the team, as well as a calendar of local events that the team will be participating in.
+    // },
      {
         id: 8,
         title: "Contact",

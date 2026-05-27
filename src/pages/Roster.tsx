@@ -1,121 +1,35 @@
 import NavBar from "../components/Nav/NavBar"
-import { Box, Typography, Card, CardContent, Avatar, CircularProgress } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import { Box, Typography, Card, CardContent, Avatar, CircularProgress, Grid, Tabs, Tab, Container } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { motion } from 'framer-motion'; 
+import { motion, AnimatePresence } from 'framer-motion'; 
 import Footer from "../components/Footer";
 import axiosInstance from "../api/axiosInstance";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SyntheticEvent } from 'react';
 
-// Define a custom theme with orange and blue palette
+// Unified Theme
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#FF5722', // Orange
-    },
-    secondary: {
-      main: '#2196F3', // Blue
-    },
-    background: {
-      default: '#f1f2f6',
-    },
-    text: {
-      primary: '#2c3e50', 
-      secondary: '#7f8c8d', 
-    },
+    primary: { main: '#FF5722' },
+    secondary: { main: '#2196F3' },
+    background: { default: '#f8f9fa' },
+    text: { primary: '#2c3e50', secondary: '#7f8c8d' },
   },
   typography: {
     fontFamily: 'Poppins, sans-serif',
-    h4: {
-      fontFamily: 'Raleway, sans-serif',
+    h4: { 
+      fontFamily: 'Raleway, sans-serif', 
       fontWeight: 800, 
-      color: '#FF5722', 
-      textShadow: '2px 2px 4px rgba(0,0,0,0.1)', 
-    },
-    h6: {
-      fontFamily: 'Raleway, sans-serif',
-      fontWeight: 700, 
-      color: '#2196F3', 
-      letterSpacing: '0.02em', 
-    },
-    subtitle1: {
-        fontWeight: 600,
-        color: '#FF5722', 
-        fontSize: '1.8rem', 
-    },
-    body2: {
-      color: '#555555', 
-      fontSize: '0.95rem',
-    },
-  },
-  components: {
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 16, 
-          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)', 
-          background: 'linear-gradient(145deg, #ffffff, #f0f0f0)', 
-          border: '1px solid #e0e0e0', 
-          height: '100%',
-          maxWidth: 300, 
-          minWidth: 260,  
-          margin: '0 auto', 
-          display: 'flex', 
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '24px', 
-        },
-      },
-    },
-    MuiAvatar: {
-      styleOverrides: {
-        root: {
-          width: 90, 
-          height: 90,
-          border: '4px solid #2196F3', 
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', 
-          transition: 'transform 0.3s ease-in-out', 
-          '&:hover': {
-            transform: 'scale(1.1)', 
-          },
-        },
-      },
+      color: '#FF5722',
+      textTransform: 'uppercase',
+      letterSpacing: '1px'
     },
   },
 });
 
-
-// Framer Motion variants for staggered animation
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2, 
-    },
-  },
-};
-
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: "spring", 
-      stiffness: 100, 
-      damping: 10,  
-    },
-  },
-  hover: {
-    y: -8, 
-    scale: 1.02, 
-    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.25)', 
-    transition: {
-      duration: 0.3,
-    },
-  },
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 100 } },
+  exit: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } }
 };
 
 const CLOUDINARY_CLOUD_NAME = "doairargz";
@@ -126,14 +40,17 @@ type Player = {
   id: number;
   name: string;
   jersey_number: number;
-  position: string;
+  position: 'PG' | 'SG' | 'SF' | 'PF' | 'C'; 
   image?: string;
 };
 
 const Roster = () => {
-  const [teamRoster, setTeamRoster] = useState<Player[]>([]); // State to hold fetched player data
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState<string | null>(null); // Error state
+  const [teamRoster, setTeamRoster] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [tabValue, setTabValue] = useState(0);
+
+  const categories = ["All", "Guards", "Forwards", "Centers"];
 
   useEffect(() => {
     const fetchRoster = async () => {
@@ -141,213 +58,151 @@ const Roster = () => {
         const response = await axiosInstance.get('roster/');
         setTeamRoster(response.data);
       } catch (err) {
-        console.error("Error fetching roster:", err);
-        setError('Failed to load roster. Please try again later.');
+        setError('Failed to load roster.');
       } finally {
         setLoading(false);
       }
     };
-
     fetchRoster();
   }, []);
 
+  const handleTabChange = (_event: SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  const filteredPlayers = teamRoster.filter((player) => {
+    switch (tabValue) {
+      case 1: return ['PG', 'SG'].includes(player.position);
+      case 2: return ['SF', 'PF'].includes(player.position);
+      case 3: return player.position === 'C';
+      default: return true;
+    }
+  });
+
   return (
-    <div>
-      <NavBar />
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: '#f8f9fa' }}>
       <ThemeProvider theme={theme}>
-        <Box
-          sx={{
-            py: 8,
-            px: { xs: 2, sm: 4, md: 8 },
-            backgroundColor: "background.default",
-            // minHeight: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 6,
-            flexGrow: 1,
-          }}
-        >
-          <Typography
-            variant="h4"
-            component="h1"
-            gutterBottom
-            sx={{ textAlign: "center" }}
-          >
-            Our Elite Roster
-          </Typography>
+        
+        {/* --- FIXED HEADER BLOCK: NavBar and Tabs move together --- */}
+        <Box sx={{ position: 'sticky', top: 0, zIndex: 1200, bgcolor: 'white' }}>
+          <NavBar />
+          <Box sx={{ 
+            borderBottom: '1px solid #e0e0e0', 
+            pt: 2, 
+            pb: 2,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
+          }}>
+            <Typography variant="h4" sx={{ textAlign: "center", mb: 2, fontSize: {xs: '1.2rem', md: '1.8rem'} }}>
+              Our Elite Roster
+            </Typography>
+            
+            <Container maxWidth="sm">
+              <Tabs 
+                value={tabValue} 
+                onChange={handleTabChange} 
+                variant="scrollable"
+                scrollButtons={false}
+                centered
+                sx={{ 
+                  minHeight: '40px',
+                  '& .MuiTabs-indicator': { display: 'none' },
+                  '& .MuiTabs-flexContainer': { gap: 1 }
+                }}
+              >
+                {categories.map((cat) => (
+                  <Tab 
+                    key={cat} 
+                    label={cat} 
+                    sx={{ 
+                      textTransform: 'none',
+                      fontWeight: 700,
+                      minHeight: '34px',
+                      borderRadius: '20px',
+                      fontSize: '0.8rem',
+                      color: 'text.secondary',
+                      border: '1px solid #eee',
+                      px: 2,
+                      transition: 'all 0.2s ease',
+                      '&.Mui-selected': { 
+                        color: 'white', 
+                        bgcolor: 'primary.main',
+                        borderColor: 'primary.main',
+                        boxShadow: '0 4px 8px rgba(255, 87, 34, 0.3)'
+                      }
+                    }} 
+                  />
+                ))}
+              </Tabs>
+            </Container>
+          </Box>
+        </Box>
 
+        {/* --- MAIN CONTENT: Players list --- */}
+        <Container maxWidth="lg" sx={{ py: 4, flexGrow: 1 }}>
           {loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "300px",
-              }}
-            >
-              <CircularProgress color="primary" />
-              <Typography variant="h6" sx={{ ml: 2, color: "text.secondary" }}>
-                Loading Players...
-              </Typography>
-            </Box>
-          ) : error ? (
-            <Typography variant="h6" color="error" sx={{ textAlign: "center" }}>
-              {error}
-            </Typography>
-          ) : teamRoster.length === 0 ? (
-            <Typography
-              variant="h6"
-              sx={{ textAlign: "center", color: "text.secondary" }}
-            >
-              No players found on the roster.
-            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}><CircularProgress color="primary" /></Box>
           ) : (
-            <Grid
-              container
-              spacing={4}
-              justifyContent="center"
-              component={motion.div}
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {teamRoster.map((player) => {
-                // Construct the full Cloudinary URL
-                const fullCloudinaryUrl = player.image
-                  ? `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/${player.image}`
-                  : null; // Set to null if no image path
+            <Grid container spacing={2} justifyContent="center">
+              <AnimatePresence mode="popLayout">
+                {filteredPlayers.map((player) => {
+                  const initials = player.name.split(" ").map(n => n[0]).join("");
+                  const placeholder = `https://placehold.co/150x150/FF5722/FFFFFF?text=${initials}`;
+                  const photo = player.image ? `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/${player.image}` : placeholder;
 
-                return (
-                  <Grid size= {{ xs: 12, sm: 6, md: 4, lg: 3 }}
-                    key={player.id}
-                    sx={{ display: "flex" }}
-                  >
-                    <motion.div
-                      variants={itemVariants}
-                      whileHover="hover"
-                      style={{ width: "100%", display: "flex" }}
-                    >
-                      <Card
-                        sx={{
-                          width: "100%",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          p: 3,
-                        }}
+                  return (
+                    <Grid item xs={12} sm={6} lg={4} key={player.id} sx={{ display: 'flex', justifyContent: 'center' }}>
+                      <motion.div 
+                        variants={itemVariants} 
+                        initial="hidden" 
+                        animate="visible" 
+                        exit="exit" 
+                        layout
+                        style={{ width: '100%' }}
                       >
-                        <Avatar
-                          alt={player.name}
-                          // Use the constructed fullCloudinaryUrl
-                          src={
-                            fullCloudinaryUrl ||
-                            `https://placehold.co/150x150/${
-                              player.jersey_number % 2 === 0
-                                ? "2196F3"
-                                : "FF5722"
-                            }/FFFFFF?text=${
-                              player.name.charAt(0) +
-                              (player.name.split(" ").length > 1
-                                ? player.name.split(" ")[1].charAt(0)
-                                : "")
-                            }`
-                          }
-                          imgProps={{
-                            onError: (e) => {
-                              (e.target as HTMLImageElement).src = `https://placehold.co/150x150/${
-                                player.jersey_number % 2 === 0
-                                  ? "2196F3"
-                                  : "FF5722"
-                              }/FFFFFF?text=${
-                                player.name.charAt(0) +
-                                (player.name.split(" ").length > 1
-                                  ? player.name.split(" ")[1].charAt(0)
-                                  : "")
-                              }`;
-                            },
-                          }}
-                          sx={{ mb: 2 }}
-                        />
-                        <CardContent
-                          sx={{ textAlign: "center", width: "100%", pt: 0 }}
-                        >
-                          {/* ... rest of your player details ... */}
-                          <Typography
-                            variant="subtitle1"
-                            component="div"
-                            sx={{ mb: 1 }}
-                          >
-                            #{player.jersey_number}
-                          </Typography>
-                          <Typography
-                            variant="h6"
-                            component="div"
-                            sx={{ mb: 1.5 }}
-                          >
-                            {player.name}
-                          </Typography>
-                          <Box
-                            sx={{
-                              mt: 2,
-                              pt: 2,
-                              borderTop: "1px solid #e0e0e0",
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "8px",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Typography variant="body2">
-                              <Box
-                                component="span"
-                                sx={{
-                                  fontWeight: "bold",
-                                  color: theme.palette.text.secondary,
-                                }}
-                              >
-                                Position:
-                              </Box>{" "}
-                              {player.position}
+                        <Card sx={{ 
+                          display: 'flex',
+                          flexDirection: 'row', 
+                          alignItems: 'center', 
+                          p: 2, 
+                          gap: 2, 
+                          borderRadius: 3,
+                          transition: 'transform 0.2s',
+                          '&:hover': { transform: 'translateY(-4px)' }
+                        }}>
+                          <Avatar
+                            src={photo}
+                            sx={{ width: 70, height: 70, border: '2px solid #2196F3' }}
+                          />
+                          <CardContent sx={{ flex: 1, p: '0 !important' }}>
+                            <Typography sx={{ fontSize: '1rem', fontWeight: 800, color: '#2c3e50', lineHeight: 1.1 }}>
+                                {player.name}
                             </Typography>
-                            <Typography variant="body2">
-                              <Box
-                                component="span"
-                                sx={{
-                                  fontWeight: "bold",
-                                  color: theme.palette.text.secondary,
-                                }}
-                              >
-                                Height:
-                              </Box>{" "}
-                              {player.height}
+                            <Typography sx={{ fontSize: '0.9rem', color: 'primary.main', fontWeight: 700, mt: 0.2 }}>
+                                #{player.jersey_number}
                             </Typography>
-                            <Typography variant="body2">
-                              <Box
-                                component="span"
-                                sx={{
-                                  fontWeight: "bold",
-                                  color: theme.palette.text.secondary,
-                                }}
-                              >
-                                Weight:
-                              </Box>{" "}
-                              {player.weight} kgs
-                            </Typography>
-                          </Box>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  </Grid>
-                );
-              })}
+                            
+                            <Box sx={{ display: 'flex', gap: 2, mt: 1, pt: 0.5, borderTop: '1px solid #f5f5f5' }}>
+                              <Typography sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
+                                <strong>POS:</strong> {player.position}
+                              </Typography>
+                              <Typography sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
+                                <strong>H:</strong> {player.height}ft
+                              </Typography>
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    </Grid>
+                  );
+                })}
+              </AnimatePresence>
             </Grid>
           )}
-        </Box>
+        </Container>
       </ThemeProvider>
       <Footer />
-    </div>
+    </Box>
   );
 }
 
-export default Roster
+export default Roster;

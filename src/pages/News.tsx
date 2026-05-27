@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SyntheticEvent } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import NavBar from '../components/Nav/NavBar';
 import Footer from '../components/Footer';
@@ -7,30 +7,28 @@ import {
     Typography,
     Card,
     CardContent,
-    CardMedia, // Import CardMedia for images
+    CardMedia,
     Grid,
     CircularProgress,
     ThemeProvider,
     createTheme,
+    ImageList,
+    ImageListItem,
+    useMediaQuery,
+    Container,
+    Tabs,
+    Tab,
+    Stack,
 } from '@mui/material';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { styled } from "@mui/system";
 
-// Define a custom theme with orange and blue palette
 const theme = createTheme({
     palette: {
-        primary: {
-            main: '#FF5722', // Orange
-        },
-        secondary: {
-            main: '#2196F3', // Blue
-        },
-        background: {
-            default: '#f1f2f6',
-        },
-        text: {
-            primary: '#2c3e50',
-            secondary: '#7f8c8d',
-        },
+        primary: { main: '#FF5722' },
+        secondary: { main: '#2196F3' },
+        background: { default: '#f8f9fa' },
+        text: { primary: '#2c3e50', secondary: '#7f8c8d' },
     },
     typography: {
         fontFamily: 'Poppins, sans-serif',
@@ -38,244 +36,205 @@ const theme = createTheme({
             fontFamily: 'Raleway, sans-serif',
             fontWeight: 800,
             color: '#FF5722',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
-        },
-        h6: {
-            fontFamily: 'Raleway, sans-serif',
-            fontWeight: 700,
-            color: '#2196F3',
-            letterSpacing: '0.02em',
-        },
-        subtitle1: {
-            fontWeight: 600,
-            color: '#FF5722',
-            fontSize: '1.8rem',
-        },
-        body2: {
-            color: '#555555',
-            fontSize: '0.95rem',
-        },
-    },
-    components: {
-        MuiCard: {
-            styleOverrides: {
-                root: {
-                    borderRadius: 16,
-                    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
-                    background: 'linear-gradient(145deg, #ffffff, #f0f0f0)',
-                    border: '1px solid #e0e0e0',
-                    height: '100%',
-                    // Adjustments for horizontal layout:
-                    display: 'flex',
-                    flexDirection: { xs: 'column', sm: 'row' }, // Stack on small, row on medium+
-                    maxWidth: 'none', // Remove fixed max-width to let it expand
-                    width: '100%', // Ensure it takes full width of its grid item
-                    // Remove `alignItems: 'center'` from previous roster card styles
-                    // Remove `justifyContent: 'space-between'` if not needed for content alignment
-                    padding: 0, // CardMedia and CardContent will manage their own padding
-                },
-            },
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
         },
     },
 });
 
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.2,
-        },
+// Styled Component for the Gallery Item (Matching About Page Logic)
+const StyledImageListItem = styled(ImageListItem)(({ theme }) => ({
+    borderRadius: "16px",
+    overflow: "hidden",
+    cursor: "pointer",
+    boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+    "& img": {
+        width: "100%",
+        height: "100%",
+        display: "block",
+        transition: "transform 0.6s cubic-bezier(0.33, 1, 0.68, 1)",
     },
-};
+    "&:hover img": {
+        transform: "scale(1.1)",
+    },
+    "&:hover .overlay": {
+        opacity: 1,
+    },
+}));
+
+const ImageOverlay = styled(Box)({
+    position: "absolute",
+    inset: 0,
+    // Using the same blue gradient from the About Page
+    background: "linear-gradient(to top, rgba(26, 35, 126, 0.9) 0%, rgba(26, 35, 126, 0.2) 60%, transparent 100%)",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    padding: "20px",
+    opacity: 0,
+    transition: "opacity 0.4s ease",
+    color: "white",
+});
 
 const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-        y: 0,
-        opacity: 1,
-        transition: {
-            type: 'spring',
-            stiffness: 100,
-            damping: 10,
-        },
-    },
-    hover: {
-        y: -8,
-        scale: 1.02,
-        boxShadow: '0 12px 24px rgba(0, 0, 0, 0.25)',
-        transition: {
-            duration: 0.3,
-        },
-    },
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } },
+    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } }
 };
-
-const CLOUDINARY_CLOUD_NAME = "doairargz"; // Re-using your Cloudinary name
 
 type Article = {
     id: number;
     title: string;
     content: string;
     published_date: string;
-    image?: string; // Add optional image property for Cloudinary path
+    image_url: string | null;
+};
+
+type GalleryItem = {
+    id: number;
+    caption: string;
+    image_url: string | null;
 };
 
 const News = () => {
     const [news, setNews] = useState<Article[]>([]);
+    const [gallery, setGallery] = useState<GalleryItem[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [tabValue, setTabValue] = useState(0);
+
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isTab = useMediaQuery(theme.breakpoints.down('md'));
+    const cols = isMobile ? 1 : isTab ? 2 : 3;
 
     useEffect(() => {
-        const fetchNews = async () => {
+        const fetchData = async () => {
+            setLoading(true);
             try {
-                // 2. USE axiosInstance and REMOVE 'http://localhost:8000/api/'
-                // The instance already has the base URL, so we just need 'news/'
-                const response = await axiosInstance.get('news/');
-                setNews(response.data);
+                if (tabValue === 0) {
+                    const response = await axiosInstance.get('news/');
+                    setNews(response.data);
+                } else {
+                    const response = await axiosInstance.get('gallery/');
+                    setGallery(response.data);
+                }
             } catch (err) {
-                setError('Failed to fetch news. Please try again later.');
-                console.error('Error fetching news:', err);
+                console.error('Error fetching data:', err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchNews();
-    }, []);
+        fetchData();
+    }, [tabValue]);
+
+    const handleTabChange = (_event: SyntheticEvent, newValue: number) => {
+        setTabValue(newValue);
+    };
 
     return (
-        <div>
-            <NavBar />
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: '#f8f9fa' }}>
             <ThemeProvider theme={theme}>
-                <Box
-                    sx={{
-                        py: 8,
-                        px: { xs: 2, sm: 4, md: 8 },
-                        backgroundColor: 'background.default',
-                        // minHeight: '100vh',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center', // Keep center for the main content block
-                        gap: 6,
-                        flexGrow: 1, // Allow the box to grow and fill available space
-                    }}
-                >
-                    <Typography
-                        variant="h4"
-                        component="h1"
-                        gutterBottom
-                        sx={{ textAlign: 'center' }}
-                    >
-                        Stay on the Loop with Us...
-                    </Typography>
-
-                    {loading ? (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                minHeight: '300px',
-                            }}
-                        >
-                            <CircularProgress color="primary" />
-                            <Typography variant="h6" sx={{ ml: 2, color: 'text.secondary' }}>
-                                Loading News...
-                            </Typography>
-                        </Box>
-                    ) : error ? (
-                        <Typography variant="h6" color="error" sx={{ textAlign: 'center' }}>
-                            {error}
+                <Box sx={{ position: 'sticky', top: 0, zIndex: 1200, bgcolor: 'white' }}>
+                    <NavBar />
+                    <Box sx={{ borderBottom: '1px solid #e0e0e0', pt: 2, pb: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+                        <Typography variant="h4" sx={{ textAlign: "center", mb: 2, fontSize: { xs: '1.2rem', md: '1.8rem' } }}>
+                            Media Center
                         </Typography>
-                    ) : news.length === 0 ? (
-                        <Typography
-                            variant="h6"
-                            sx={{ textAlign: 'center', color: 'text.secondary' }}
-                        >
-                            No news articles available.
-                        </Typography>
-                    ) : (
-                        <Grid
-                            container
-                            spacing={4}
-                            justifyContent="center"
-                            component={motion.div}
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                            sx={{ width: '100%' }} // Ensure the grid takes full width
-                        >
-                            {news.map((article) => {
-                                // Construct the full Cloudinary URL
-                                const fullCloudinaryUrl = article.image
-                                    ? `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/${article.image}`
-                                    : null; // Set to null if no image path
-
-                                return (
-                                    <Grid
-                                        item
-                                        key={article.id}
-                                        xs={12} // Full width on small screens
-                                        md={10} // Wider on medium screens
-                                        lg={8}  // Even wider on large screens for horizontal cards
-                                        sx={{ display: 'flex' }}
-                                    >
-                                        <motion.div
-                                            variants={itemVariants}
-                                            whileHover="hover"
-                                            style={{ width: '100%', display: 'flex' }}
-                                        >
-                                            <Card sx={{ width: '100%' }}>
-                                                {/* Card Media for Image */}
-                                                <CardMedia
-                                                    component="img"
-                                                    sx={{
-                                                        width: { xs: '100%', sm: 180 }, // Full width on small, fixed width on larger
-                                                        height: { xs: 200, sm: 'auto' }, // Fixed height on small, auto on larger
-                                                        flexShrink: 0, // Prevent image from shrinking
-                                                        objectFit: 'cover', // Cover the area without distorting
-                                                    }}
-                                                    image={fullCloudinaryUrl || `https://placehold.co/180x200/2196F3/FFFFFF?text=NEWS`}
-                                                    alt={article.title}
-                                                    onError={(e) => {
-                                                        // Fallback to a placeholder if image fails to load
-                                                        e.currentTarget.src = `https://placehold.co/180x200/2196F3/FFFFFF?text=NEWS`;
-                                                    }}
-                                                />
-                                                <CardContent sx={{ flexGrow: 1, p: { xs: 2, sm: 3 } }}> {/* Content takes remaining space */}
-                                                    <Typography variant="h6" component="h3" gutterBottom>
-                                                        {article.title}
-                                                    </Typography>
-                                                    <Typography variant="body2" paragraph>
-                                                        {article.content}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="textSecondary"
-                                                        sx={{ mt: 'auto', pt: 1, borderTop: '1px solid #eee' }} // Push to bottom, add a top border
-                                                    >
-                                                        Published on:{' '}
-                                                        {new Date(
-                                                            article.published_date
-                                                        ).toLocaleDateString('en-US', {
-                                                            weekday: 'short',
-                                                            year: 'numeric',
-                                                            month: 'short',
-                                                            day: 'numeric',
-                                                        })}
-                                                    </Typography>
-                                                </CardContent>
-                                            </Card>
-                                        </motion.div>
-                                    </Grid>
-                                );
-                            })}
-                        </Grid>
-                    )}
+                        <Container maxWidth="sm">
+                            <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" centered sx={{ minHeight: '40px', '& .MuiTabs-indicator': { display: 'none' }, '& .MuiTabs-flexContainer': { gap: 1 } }}>
+                                <Tab label="Latest News" sx={tabStyle} />
+                                <Tab label="Gallery" sx={tabStyle} />
+                            </Tabs>
+                        </Container>
+                    </Box>
                 </Box>
+
+                <Container maxWidth="lg" sx={{ py: 4, flexGrow: 1 }}>
+                    <AnimatePresence mode="wait">
+                        {tabValue === 0 ? (
+                            <motion.div key="news" variants={itemVariants} initial="hidden" animate="visible" exit="exit">
+                                {loading ? (
+                                    <Box sx={{ textAlign: 'center', mt: 10 }}><CircularProgress /></Box>
+                                ) : (
+                                    <Grid container spacing={3} justifyContent="center">
+                                        {news.map((article) => (
+                                            <Grid item xs={12} key={article.id}>
+                                                <Card sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, borderRadius: 3, overflow: 'hidden', transition: '0.3s', '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 30px rgba(0,0,0,0.1)' } }}>
+                                                    <CardMedia
+                                                        component="img"
+                                                        sx={{ width: { xs: '100%', sm: 280 }, height: { xs: 200, sm: 180 }, objectFit: 'cover', bgcolor: '#eee' }}
+                                                        image={article.image_url || `https://placehold.co/240x200/2196F3/FFFFFF?text=NEWS`}
+                                                    />
+                                                    <CardContent sx={{ flex: 1, p: 3 }}>
+                                                        <Typography variant="h6" sx={{ fontWeight: 800, mb: 1 }}>{article.title}</Typography>
+                                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineClamp: 3, display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                                            {article.content}
+                                                        </Typography>
+                                                        <Box sx={{ pt: 2, borderTop: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between' }}>
+                                                            <Typography variant="caption" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                                                                {new Date(article.published_date).toLocaleDateString()}
+                                                            </Typography>
+                                                            <Typography variant="caption" sx={{ fontWeight: 600 }}>Read More →</Typography>
+                                                        </Box>
+                                                    </CardContent>
+                                                </Card>
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                )}
+                            </motion.div>
+                        ) : (
+                            <motion.div key="gallery" variants={itemVariants} initial="hidden" animate="visible" exit="exit">
+                                {loading ? (
+                                    <Box sx={{ textAlign: 'center', mt: 10 }}><CircularProgress /></Box>
+                                ) : (
+                                    <ImageList variant="masonry" cols={cols} gap={16}>
+                                        {gallery.map((item) => (
+                                            <StyledImageListItem key={item.id}>
+                                                <img
+                                                    src={item.image_url || `https://placehold.co/600x400/EEE/999?text=Gallery+Photo`}
+                                                    alt={item.caption}
+                                                    loading="lazy"
+                                                />
+                                                <ImageOverlay className="overlay">
+                                                    <Typography variant="h6" sx={{ fontWeight: 800, mb: 0.5 }}>
+                                                        {item.caption || "Mamba Archive"}
+                                                    </Typography>
+                                                    <Stack direction="row" spacing={1} alignItems="center">
+                                                        <Box sx={{ width: 30, height: 2, bgcolor: '#FF5722' }} />
+                                                        <Typography variant="caption" sx={{ textTransform: 'uppercase', letterSpacing: 1.5, fontWeight: 600 }}>
+                                                            Mamba Archives
+                                                        </Typography>
+                                                    </Stack>
+                                                </ImageOverlay>
+                                            </StyledImageListItem>
+                                        ))}
+                                    </ImageList>
+                                )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </Container>
             </ThemeProvider>
             <Footer />
-        </div>
+        </Box>
     );
+};
+
+const tabStyle = {
+    textTransform: 'none',
+    fontWeight: 700,
+    minHeight: '34px',
+    borderRadius: '20px',
+    fontSize: '0.8rem',
+    color: 'text.secondary',
+    border: '1px solid #eee',
+    transition: 'all 0.2s ease',
+    '&.Mui-selected': { 
+        color: 'white', 
+        bgcolor: 'primary.main',
+        borderColor: 'primary.main',
+        boxShadow: '0 4px 8px rgba(255, 87, 34, 0.3)'
+    }
 };
 
 export default News;

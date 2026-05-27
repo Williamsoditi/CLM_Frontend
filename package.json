@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.1.1",
-    "@mui/material": "^7.1.1",
+    "@mui/material": "^7.3.10",
     "@tailwindcss/vite": "^4.1.7",
     "axios": "^1.10.0",
     "lucide-react": "^0.511.0",

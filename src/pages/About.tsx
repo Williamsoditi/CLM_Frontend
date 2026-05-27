@@ -1,620 +1,350 @@
-import NavBar from "../components/Nav/NavBar";
+import  { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // For the functional "See More" link
+import axiosInstance from "../api/axiosInstance";
 import {
   Container,
   Typography,
   Box,
   Grid,
-  Card,
-  CardContent,
   Avatar,
   Paper,
-  IconButton,
-  Stack, // Import Stack for easy spacing and alignment
+  Stack,
+  Divider,
+  Chip,
+  useMediaQuery,
+  CssBaseline,
+  CircularProgress,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { CssBaseline } from "@mui/material";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { styled } from "@mui/system";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import SportsBasketballIcon from "@mui/icons-material/SportsBasketball"; // New: Icon for Mission
+
+// Image Imports (Keeping leadership static as they change less often)
+import dukeImg from "../assets/duke.jpeg";
+import coachImg from "../assets/coach.jpeg";
+import brianImg from "../assets/brian.jpeg";
+import kmanImg from "../assets/kman.jpeg";
+import act1 from "../assets/act1.jpeg";
+import act2 from "../assets/act2.jpeg";
+import act3 from "../assets/act3.jpeg";
+import act4 from "../assets/act4.jpeg";
+import sielteam from "../assets/sielteam.jpeg";
+
+// Icons
+import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
+import VerifiedIcon from "@mui/icons-material/Verified";
+
+import NavBar from "../components/Nav/NavBar";
 import Footer from "../components/Footer";
 
-// Define a custom theme for a basketball aesthetic
 const theme = createTheme({
   palette: {
-    primary: {
-      main: "#FF5722", // Orange (like a basketball)
-    },
-    secondary: {
-      main: "#1976D2", // Blue (like a court or team color)
-    },
-    background: {
-      default: "#f0f2f5", // Light grey for subtle background
-      paper: "#ffffff", // White for cards/papers
-    },
-    text: {
-      primary: "#212121", // Dark grey for main text
-      secondary: "#757575", // Lighter grey for secondary text
-    },
+    mode: 'light',
+    primary: { main: "#FF5722", contrastText: "#fff" },
+    secondary: { main: "#0D47A1" },
+    background: { default: "#F4F7F9", paper: "#ffffff" },
   },
   typography: {
-    fontFamily: "Poppins, sans-serif",
-    h3: {
-      fontFamily: "Raleway, sans-serif",
-      fontWeight: 700,
-      color: "#FF5722",
-      marginBottom: "1rem",
-      textAlign: "center",
-      "@media (max-width:600px)": {
-        fontSize: "2rem",
-      },
-    },
-    h4: {
-      fontFamily: "Raleway, sans-serif",
-      fontWeight: 600,
-      color: "#1976D2",
-      marginBottom: "0.75rem",
-      borderBottom: "2px solid #FF5722", // Orange underline
-      paddingBottom: "0.5rem",
-      display: "inline-block", // Make underline only as wide as text
-      "@media (max-width:600px)": {
-        fontSize: "1.5rem",
-      },
-    },
-    h5: {
-      fontFamily: "Raleway, sans-serif",
-      fontWeight: 600,
-      color: "#212121",
-      marginBottom: "0.5rem",
-      "@media (max-width:600px)": {
-        fontSize: "1.25rem",
-      },
-    },
-    body1: {
-      fontSize: "1rem",
-      lineHeight: 1.6,
-      color: "#212121",
-    },
-    body2: {
-      fontSize: "0.9rem",
-      lineHeight: 1.5,
-      color: "#757575",
-    },
-  },
-  components: {
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: "12px",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
-          transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-          "&:hover": {
-            transform: "translateY(-5px)",
-            boxShadow: "0 8px 30px rgba(0,0,0,0.1)",
-          },
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: "8px",
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: "12px",
-          padding: "2rem",
-          marginBottom: "2rem",
-          backgroundColor: "#ffffff",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
-          "@media (max-width:600px)": {
-            padding: "1rem",
-          },
-        },
-      },
-    },
-    MuiAvatar: {
-      styleOverrides: {
-        root: {
-          width: 80,
-          height: 80,
-          border: "3px solid #FF5722",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-        },
-      },
-    },
+    fontFamily: "'Inter', 'Poppins', sans-serif",
+    h2: { fontWeight: 900, letterSpacing: "-0.02em" },
+    h4: { fontWeight: 800, color: "#1A237E" },
+    h6: { fontWeight: 700 },
+    body1: { lineHeight: 1.8, color: "#455A64", fontSize: "1.1rem" },
   },
 });
 
-const StyledIconListItem = styled("li")(({ theme }) => ({
-  marginBottom: theme.spacing(1.5),
+// --- STYLED COMPONENTS ---
+const GlassPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(5),
+  borderRadius: "24px",
+  backdropFilter: "blur(10px)",
+  backgroundColor: "rgba(255, 255, 255, 0.9)", 
+  border: "1px solid rgba(255, 255, 255, 0.3)",
+  boxShadow: "0 10px 40px rgba(0,0,0,0.04)",
+  [theme.breakpoints.down("sm")]: {
+    padding: theme.spacing(3),
+  },
+}));
+
+const GalleryItem = styled(motion.div)(({ theme }) => ({
+  position: "relative",
+  borderRadius: "16px",
+  overflow: "hidden",
+  height: "350px",
+  cursor: "pointer",
+  boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+  "& img": {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    transition: "transform 0.6s cubic-bezier(0.33, 1, 0.68, 1)",
+  },
+  "&:hover img": {
+    transform: "scale(1.1)",
+  },
+  "&:hover .overlay": {
+    opacity: 1,
+  },
+}));
+
+const ImageOverlay = styled(Box)({
+  position: "absolute",
+  inset: 0,
+  background: "linear-gradient(to top, rgba(26, 35, 126, 0.9) 0%, rgba(26, 35, 126, 0.2) 60%, transparent 100%)",
   display: "flex",
-  alignItems: "flex-start",
-  gap: theme.spacing(1.5),
-  listStyle: "none",
-  paddingLeft: 0,
-}));
+  flexDirection: "column",
+  justifyContent: "flex-end",
+  padding: "20px",
+  opacity: 0,
+  transition: "opacity 0.4s ease",
+  color: "white",
+});
 
-const ListIcon = styled(FiberManualRecordIcon)(({ theme }) => ({
-  fontSize: "1rem",
-  color: theme.palette.primary.main,
-  marginTop: "0.5rem",
-  flexShrink: 0,
-}));
-
-// Dummy data for team members
-interface TeamMember {
-  name: string;
-  role: string;
-  imageUrl: string;
-}
-
-const teamMembers: TeamMember[] = [
-  {
-    name: "Duke Mairura",
-    role: "Team Captain",
-    imageUrl: "https://via.placeholder.com/150/1976D2/FFFFFF?text=Maya", // Placeholder for demo
-  },
-  {
-    name: "Mshilla Rose",
-    role: "Head Coach",
-    imageUrl: "https://via.placeholder.com/150/FF5722/FFFFFF?text=Dr.+Ben", // Placeholder for demo
-  },
-  {
-    name: "Berine Okoth",
-    role: "General Manager",
-    imageUrl: "https://via.placeholder.com/150/1976D2/FFFFFF?text=Sarah", // Placeholder for demo
-  },
-];
-
-// Images for the carousel
-const carouselImages: string[] = ["/2.jpg", "/3.jpg", "/4.jpg", "/1.jpg"];
-
-// Motion variants for fade-in effect
-const fadeInVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+// --- TYPES ---
+type GalleryData = {
+    id: number;
+    caption: string;
+    image_url: string;
 };
 
+const carouselImages = [act1, act2, act3, act4, sielteam];
+const teamLeadership = [
+  { name: "Duke Mairura", role: "Captain", img: dukeImg, tag: "Elite Guard" },
+  { name: "Mshilla Rose", role: "Head Coach", img: coachImg, tag: "Pro Tactician" },
+  { name: "Brian Wakho", role: "Operations", img: brianImg, tag: "Operations" },
+  // { name: "Chris Kipkemoi", role: "Assistant Coach", img: kmanImg, tag: "Defensive Specialist" },
+];
+
 const About = () => {
-  // Carousel state
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [idx, setIdx] = useState(0);
+  const [gallery, setGallery] = useState<GalleryData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Section refs and in-view states
-  const storyRef = React.useRef(null);
-  const missionRef = React.useRef(null);
-  const teamRef = React.useRef(null);
-  const achievementsRef = React.useRef(null);
-
-  const storyInView = useInView(storyRef, { once: true, margin: "-100px" });
-  const missionInView = useInView(missionRef, { once: true, margin: "-100px" });
-  const teamInView = useInView(teamRef, { once: true, margin: "-100px" });
-  const achievementsInView = useInView(achievementsRef, {
-    once: true,
-    margin: "-100px",
-  });
-
-  // Carousel navigation handlers
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? carouselImages.length - 1 : prev - 1,
-    );
-  };
-
-  const handleNextImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === carouselImages.length - 1 ? 0 : prev + 1,
-    );
-  };
-
-  // Auto-advance carousel
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImageIndex((prev) =>
-        prev === carouselImages.length - 1 ? 0 : prev + 1,
-      );
-    }, 5000); // Change image every 5 seconds
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get('gallery/');
+        // Only take the first 6 images from the API
+        setGallery(response.data.slice(0, 6));
+      } catch (err) {
+        console.error('Error fetching gallery for about page:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+
+    const timer = setInterval(() => setIdx((prev) => (prev + 1) % carouselImages.length), 6000);
     return () => clearInterval(timer);
-  }, [carouselImages.length]);
+  }, []);
 
   return (
-    <div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <NavBar />
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Box
-          sx={{
-            minHeight: "100vh",
-            backgroundColor: theme.palette.background.default,
-            py: 4, // Vertical padding
-          }}
-        >
-          <Container maxWidth="lg">
-            {/* Carousel Section */}
-            <Box
-              sx={{
-                position: "relative",
-                height: { xs: 300, sm: 300, md: 400 },
-                borderRadius: "16px",
-                overflow: "hidden",
-                mb: 4,
-                bgcolor: "#000", // Fallback background color
-              }}
-            >
-              <AnimatePresence initial={false} mode="wait">
-                <motion.img
-                  key={currentImageIndex} // Key changes to trigger re-animation
-                  src={carouselImages[currentImageIndex]}
-                  alt="Basketball Team"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.8 }}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    position: "absolute", // Position absolute for overlay
-                  }}
-                />
-              </AnimatePresence>
 
-              {/* Overlay Text */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                  color: "#fff",
-                  p: 2,
-                  zIndex: 1, // Ensure overlay is above image
-                  background:
-                    "linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%)", // Subtle dark overlay
-                }}
-              >
-                <Typography
-                  variant="h3"
-                  component="h1"
-                  sx={{
-                    color: "#ffffff",
-                    fontWeight: "bold",
-                    textShadow: "2px 2px 4px rgba(0,0,0,0.5)", // Adds extra legibility
-                    fontSize: { xs: "1.8rem", sm: "2.5rem", md: "3rem" },
-                    mb: 1,
-                  }}
-                >
-                  About Clique Mambas
-                </Typography>
-                <Typography
-                  variant="h5"
-                  component="p"
-                  sx={{ color: "#fff", opacity: 0.9 }}
-                >
-                  Dunking Dreams, Building Champions!
-                </Typography>
-              </Box>
-
-              {/* Navigation Arrows */}
-              <IconButton
-                onClick={handlePrevImage}
-                sx={{
-                  position: "absolute",
-                  left: 8,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  color: "#fff",
-                  bgcolor: "rgba(0,0,0,0.5)",
-                  "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
-                  zIndex: 2, // Ensure arrows are above overlay
-                }}
-              >
-                <ArrowBackIosIcon />
-              </IconButton>
-              <IconButton
-                onClick={handleNextImage}
-                sx={{
-                  position: "absolute",
-                  right: 8,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  color: "#fff",
-                  bgcolor: "rgba(0,0,0,0.5)",
-                  "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
-                  zIndex: 2, // Ensure arrows are above overlay
-                }}
-              >
-                <ArrowForwardIosIcon />
-              </IconButton>
-
-              {/* Navigation Dots */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  bottom: 16,
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: 1,
-                  zIndex: 2, // Ensure dots are above overlay
-                }}
-              >
-                {carouselImages.map((_, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: "50%",
-                      bgcolor:
-                        index === currentImageIndex
-                          ? theme.palette.primary.main
-                          : "rgba(255,255,255,0.5)",
-                      cursor: "pointer",
-                      transition: "background-color 0.3s",
-                    }}
-                    onClick={() => setCurrentImageIndex(index)}
-                  />
-                ))}
-              </Box>
-            </Box>
-
-            {/* Our Story Section */}
-            <motion.div
-              ref={storyRef}
-              initial="hidden"
-              animate={storyInView ? "visible" : "hidden"}
-              variants={fadeInVariants}
-            >
-              <Paper elevation={3}>
-                <Typography variant="h4" component="h2" gutterBottom>
-                  Our Story
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  Clique Mambas men's basketball team was founded in 2017 by a
-                  group of passionate local enthusiasts who envisioned a
-                  community-driven sports organization. Starting from humble
-                  beginnings in local leagues, our dedication to hard work,
-                  teamwork, and continuous improvement quickly propelled us to
-                  regional recognition. Over the years, we've grown into a
-                  formidable force, known not just for our on-court prowess but
-                  also for our commitment to fostering young talent and giving
-                  back to the community.
-                </Typography>
-                <Typography variant="body1">
-                  We believe in the power of basketball to unite, inspire, and
-                  transform lives. Our journey has been filled with memorable
-                  victories, challenging defeats, and countless moments of
-                  growth, all of which have shaped us into the resilient and
-                  spirited team we are today.
-                </Typography>
-              </Paper>
+      <Box sx={{ bgcolor: "background.default", pb: 8 }}>
+        {/* HERO SECTION */}
+        <Box sx={{ position: "relative", height: { xs: "50vh", md: "70vh" }, overflow: "hidden", mb: 8 }}>
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={idx}
+              src={carouselImages[idx]}
+              initial={{ scale: 1.1, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2 }}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </AnimatePresence>
+          <Box sx={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to top, rgba(13, 71, 161, 0.85), transparent)",
+            display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", p: 3
+          }}>
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+              <Typography variant={isMobile ? "h4" : "h2"} sx={{ color: "white", textTransform: "uppercase", mb: 1 }}>
+                Clique Mambas
+              </Typography>
+              <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.8)", fontWeight: 400, letterSpacing: 4 }}>
+                EST. 2017 • MEN'S ELITE BASKETBALL
+              </Typography>
             </motion.div>
-
-            {/* Mission & Values Section */}
-            <motion.div
-              ref={missionRef}
-              initial="hidden"
-              animate={missionInView ? "visible" : "hidden"}
-              variants={fadeInVariants}
-            >
-              <Paper elevation={3}>
-                <Typography variant="h4" component="h2" gutterBottom>
-                  Mission & Values
-                </Typography>
-                <Grid container spacing={4}>
-                  {/* Our Mission */}
-                  <Grid item xs={12} md={6}>
-                    {" "}
-                    {/* Adjusted Grid props */}
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      spacing={1}
-                      sx={{ mb: 1 }}
-                    >
-                      <SportsBasketballIcon
-                        sx={{
-                          color: theme.palette.secondary.main,
-                          fontSize: "2rem",
-                        }}
-                      />
-                      <Typography variant="h5" component="h3" sx={{ m: 0 }}>
-                        {" "}
-                        {/* m:0 to prevent extra margin */}
-                        Our Mission
-                      </Typography>
-                    </Stack>
-                    <Typography variant="body1">
-                      To achieve excellence in basketball through disciplined
-                      training, strategic play, and unwavering team spirit,
-                      while inspiring our fans and positively impacting our
-                      community.
-                    </Typography>
-                  </Grid>
-
-                  {/* Our Core Values */}
-                  <Grid item xs={12} md={6}>
-                    {" "}
-                    {/* Adjusted Grid props */}
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      spacing={1}
-                      sx={{ mb: 1 }}
-                    >
-                      <FiberManualRecordIcon
-                        sx={{
-                          color: theme.palette.primary.main,
-                          fontSize: "1rem",
-                        }}
-                      />{" "}
-                      {/* Using existing ListIcon style for consistency */}
-                      <Typography variant="h5" component="h3" sx={{ m: 0 }}>
-                        {" "}
-                        {/* m:0 to prevent extra margin */}
-                        Our Core Values
-                      </Typography>
-                    </Stack>
-                    <Box component="ul" sx={{ pl: 0 }}>
-                      <StyledIconListItem>
-                        <ListIcon />
-                        <Typography component="span" variant="body1">
-                          <strong>Teamwork :</strong>&nbsp;We believe in
-                          collaboration, mutual support, and collective success.
-                        </Typography>
-                      </StyledIconListItem>
-                      <StyledIconListItem>
-                        <ListIcon />
-                        <Typography component="span" variant="body1">
-                          <strong>Integrity :</strong>&nbsp;We uphold fairness,
-                          honesty, and respect in all our endeavors.
-                        </Typography>
-                      </StyledIconListItem>
-                      <StyledIconListItem>
-                        <ListIcon />
-                        <Typography component="span" variant="body1">
-                          <strong>Perserverance :</strong>&nbsp;We embrace
-                          challenges, learn from setbacks, and never give up.
-                        </Typography>
-                      </StyledIconListItem>
-                      <StyledIconListItem>
-                        <ListIcon />
-                        <Typography component="span" variant="body1">
-                          <strong>Community - Engagement :</strong>&nbsp; We are
-                          committed to being positive role models and
-                          contributing to local well-being.
-                        </Typography>
-                      </StyledIconListItem>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Paper>
-            </motion.div>
-
-            {/* Our Team Members Section */}
-            <motion.div
-              ref={teamRef}
-              initial="hidden"
-              animate={teamInView ? "visible" : "hidden"}
-              variants={fadeInVariants}
-            >
-              <Paper elevation={3}>
-                <Typography variant="h4" component="h2" gutterBottom>
-                  Meet Our Team
-                </Typography>
-                <Grid container spacing={4} justifyContent="center">
-                  {teamMembers.map((member, index) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                      {" "}
-                      {/* Corrected Grid props */}
-                      <Card
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          textAlign: "center",
-                          p: 2,
-                          height: "100%",
-                        }}
-                      >
-                        <Avatar
-                          alt={member.name}
-                          src={member.imageUrl}
-                          sx={{ mb: 2 }}
-                        />
-                        <CardContent sx={{ flexGrow: 1 }}>
-                          <Typography variant="h5" component="div" gutterBottom>
-                            {member.name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ mb: 1 }}
-                          >
-                            {member.role}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Paper>
-            </motion.div>
-
-            {/* Achievements Section */}
-            <motion.div
-              ref={achievementsRef}
-              initial="hidden"
-              animate={achievementsInView ? "visible" : "hidden"}
-              variants={fadeInVariants}
-            >
-              <Paper elevation={3}>
-                <Typography variant="h4" component="h2" gutterBottom>
-                  Our Achievements
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  Since our inception, Clique Mambas has celebrated numerous
-                  milestones. We are proud to have:
-                </Typography>
-                <Box component="ul" sx={{ pl: 0 }}>
-                  <StyledIconListItem>
-                    <ListIcon />
-                    <Typography component="span" variant="body1">
-                      Won the Regional Championship in 2010, 2015, and 2022.
-                    </Typography>
-                  </StyledIconListItem>
-                  <StyledIconListItem>
-                    <ListIcon />
-                    <Typography component="span" variant="body1">
-                      Reached the National Finals in 2016 and 2023.
-                    </Typography>
-                  </StyledIconListItem>
-                  <StyledIconListItem>
-                    <ListIcon />
-                    <Typography component="span" variant="body1">
-                      Developed 5 players who went on to play professionally.
-                    </Typography>
-                  </StyledIconListItem>
-                  <StyledIconListItem>
-                    <ListIcon />
-                    <Typography component="span" variant="body1">
-                      Hosted over 50 community basketball clinics for youth.
-                    </Typography>
-                  </StyledIconListItem>
-                  <StyledIconListItem>
-                    <ListIcon />
-                    <Typography component="span" variant="body1">
-                      Recognized with the "Sportsmanship Award" for three
-                      consecutive seasons.
-                    </Typography>
-                  </StyledIconListItem>
-                </Box>
-                <Typography variant="body1">
-                  These achievements are a testament to the dedication of our
-                  players, coaching staff, and the unwavering support of our
-                  incredible fans. We look forward to many more years of
-                  success!
-                </Typography>
-              </Paper>
-            </motion.div>
-          </Container>
+          </Box>
         </Box>
-      </ThemeProvider>
+
+        <Container maxWidth="lg">
+          {/* SECTION 1: CORE STORY */}
+          <Box sx={{ mb: 10 }}>
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <GlassPaper>
+                <Chip label="OUR MISSION" color="primary" sx={{ mb: 3, fontWeight: 700, px: 2 }} />
+                <Typography variant="h4" gutterBottom>More Than A Club</Typography>
+                <Typography variant="body1" paragraph>
+                  The Clique Mambas represent the pinnacle of regional basketball excellence. 
+                  Competing in the <strong>Kenya National Basketball League - Division 1</strong>, we are committed 
+                  to professionalizing the local game.
+                </Typography>
+                <Typography variant="body1">
+                  Our "Mamba Mentality" framework combines high-level tactical execution—specifically 
+                  split-action offenses and aggressive defensive trapping—with a community-first 
+                  approach to player development.
+                </Typography>
+              </GlassPaper>
+            </motion.div>
+          </Box>
+
+          {/* SECTION 2: ACCOLADES */}
+          <Box sx={{ width: '100%', mb: 12 }}>
+            <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: { xs: 3, md: 6 }, 
+                  borderRadius: '24px', 
+                  bgcolor: 'white', 
+                  borderTop: '10px solid #FF5722',
+                  border: '1px solid #eee',
+                  boxShadow: '0 25px 60px rgba(0,0,0,0.05)',
+                }}
+              >
+                <Typography variant="h4" sx={{ mb: 5, display: 'flex', alignItems: 'center', gap: 2, color: '#1A237E' }}>
+                  <MilitaryTechIcon sx={{ fontSize: 40, color: '#FF5722' }} />
+                  Accolades History
+                </Typography>
+
+                <Stack spacing={0}>
+                  {[
+                    { year: '2023/2024', league: 'Street League', status: 'Runners Up', win: false },
+                    { year: '2023', league: 'Division 2', status: 'Runners Up', win: false },
+                    { year: '2022', league: 'NBA League', status: 'Runners Up', win: false },
+                    { year: '2021', league: 'Peace Cup', status: 'CHAMPIONS', win: true },
+                    { year: '2021/2022', league: 'Street League', status: 'CHAMPIONS', win: true },
+                  ].map((item, i) => (
+                    <Box key={i}>
+                      <motion.div whileHover={{ x: 10 }} transition={{ type: "spring", stiffness: 300 }}>
+                        <Box sx={{ 
+                          display: 'flex', alignItems: 'center', py: 3, px: { xs: 1, md: 3 },
+                          bgcolor: item.win ? 'rgba(255, 87, 34, 0.04)' : 'transparent',
+                          '&:hover': { bgcolor: '#fbfbfb' }
+                        }}>
+                          <Typography variant="h5" sx={{ fontWeight: 900, color: item.win ? '#FF5722' : '#B0BEC5', minWidth: { xs: 100, md: 150 } }}>
+                            {item.year}
+                          </Typography>
+                          <Box sx={{ flexGrow: 1 }}>
+                            <Typography variant="h6" sx={{ color: '#1A237E', mb: 0.5 }}>{item.league}</Typography>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700, textTransform: 'uppercase', color: item.win ? '#FF5722' : '#78909C', letterSpacing: 1 }}>{item.status}</Typography>
+                          </Box>
+                          {item.win ? <MilitaryTechIcon sx={{ fontSize: 45, color: '#FFD700' }} /> : <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#ECEFF1', mr: 2 }} />}
+                        </Box>
+                      </motion.div>
+                      {i < 4 && <Divider />}
+                    </Box>
+                  ))}
+                </Stack>
+              </Paper>
+            </motion.div>
+          </Box>
+
+          {/* SECTION 3: DYNAMIC GALLERY */}
+          <Box sx={{ mb: 12 }}>
+            <Typography variant="h4" align="center" sx={{ mb: 2 }}>Inside the Den</Typography>
+            <Typography variant="body1" align="center" sx={{ mb: 6, maxWidth: 600, mx: 'auto' }}>
+              Capturing the grit and brotherhood that defines our culture.{" "}
+              <Link 
+                to="/news" 
+                style={{ 
+                    color: '#FF5722', 
+                    textDecoration: 'none', 
+                    fontWeight: 700, 
+                    borderBottom: '2px solid rgba(255, 87, 34, 0.3)' 
+                }}
+              >
+                <br />
+                See more
+              </Link>
+            </Typography>
+
+            {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}>
+                    <CircularProgress color="primary" />
+                </Box>
+            ) : (
+                <Grid container spacing={3}>
+                {gallery.map((item, i) => {
+                    // Logic for alternating grid: Row 1 (7-5), Row 2 (5-7), Row 3 (7-5)
+                    const isWide = (Math.floor(i / 2) % 2 === 0) 
+                        ? (i % 2 === 0 ? 7 : 5) 
+                        : (i % 2 === 0 ? 5 : 7);
+
+                    return (
+                        <Grid item xs={12} sm={isWide} key={item.id}>
+                            <GalleryItem
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: (i % 3) * 0.1 }}
+                            >
+                                <img src={item.image_url || `https://placehold.co/800x400?text=Mamba+Archive`} alt={item.caption} />
+                                <ImageOverlay className="overlay">
+                                <Typography variant="h6" sx={{ fontWeight: 800, mb: 0.5 }}>{item.caption || "Mamba Mentality"}</Typography>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    <Box sx={{ width: 30, height: 2, bgcolor: '#FF5722' }} />
+                                    <Typography variant="caption" sx={{ textTransform: 'uppercase', letterSpacing: 1.5 }}>Mambas' Archives</Typography>
+                                </Stack>
+                                </ImageOverlay>
+                            </GalleryItem>
+                        </Grid>
+                    )
+                })}
+                </Grid>
+            )}
+          </Box>
+
+          {/* SECTION 4: LEADERSHIP */}
+          <Box sx={{ mb: 10 }}>
+            <Typography variant="h4" align="center" sx={{ mb: 8 }}>Elite Leadership</Typography>
+            <Grid container spacing={4} justifyContent="center">
+              {teamLeadership.map((member, i) => (
+                <Grid item xs={12} sm={6} md={3} key={i}>
+                  <Paper elevation={0} sx={{ p: 4, textAlign: 'center', borderRadius: 4, bgcolor: 'white', height: '100%', border: '1px solid #f0f0f0' }}>
+                    <Avatar 
+                      src={member.img} 
+                      sx={{ width: 120, height: 120, mx: 'auto', mb: 3, border: "4px solid #FF5722", boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }} 
+                    />
+                    <Typography variant="h6" sx={{ lineHeight: 1.2, mb: 1 }}>{member.name}</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>{member.role}</Typography>
+                    <Chip label={member.tag} color="secondary" variant="outlined" size="small" />
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+
+          {/* FINAL BANNER */}
+          <motion.div whileHover={{ scale: 1.01 }} transition={{ type: "spring", stiffness: 400 }}>
+            <Stack 
+              direction={isMobile ? "column" : "row"} 
+              spacing={4} 
+              alignItems="center" 
+              sx={{ p: 5, bgcolor: "#1A237E", color: "white", borderRadius: 4, boxShadow: '0 20px 40px rgba(13, 71, 161, 0.2)' }}
+            >
+              <VerifiedIcon sx={{ fontSize: 80, color: "#FF5722" }} />
+              <Box>
+                <Typography variant="h5" gutterBottom sx={{ fontWeight: 800 }}>Professional Standards</Typography>
+                <Typography variant="body1" sx={{ opacity: 0.9, color: "white" }}>
+                  Our system is built on professional rigor. From our tactical split-action offenses 
+                  to our community outreach, we set the standard for regional basketball.
+                </Typography>
+              </Box>
+            </Stack>
+          </motion.div>
+        </Container>
+      </Box>
+
       <Footer />
-    </div>
+    </ThemeProvider>
   );
 };
 

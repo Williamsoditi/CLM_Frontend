@@ -54,7 +54,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row justify-start items-center gap-4">
             {" "}
             <Link
-              to="/roster"
+              to="/about"
               className="
               bg-[#000080]
               hover:bg-[#000066]
@@ -67,9 +67,9 @@ const Hero = () => {
               transform hover:scale-105
             "
             >
-              Meet the Team
+              About Us
             </Link>
-            <Link
+            {/* <Link
               to="/schedule"
               className="
               bg-transparent
@@ -87,7 +87,7 @@ const Hero = () => {
               "
             >
               View Schedule
-            </Link>
+            </Link> */}
           </div>
           {/* Social Media Icons Section */}
           <div className="flex justify-start items-center gap-6 mt-10 z-20 flex-wrap sm:justify-start lg:justify-start ">
