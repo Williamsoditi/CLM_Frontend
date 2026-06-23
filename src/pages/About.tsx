@@ -23,7 +23,6 @@ import { styled } from "@mui/system";
 import dukeImg from "../assets/duke.jpeg";
 import coachImg from "../assets/coach.jpeg";
 import brianImg from "../assets/brian.jpeg";
-import kmanImg from "../assets/kman.jpeg";
 import act1 from "../assets/act1.jpeg";
 import act2 from "../assets/act2.jpeg";
 import act3 from "../assets/act3.jpeg";
@@ -168,7 +167,7 @@ const About = () => {
                 Clique Mambas
               </Typography>
               <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.8)", fontWeight: 400, letterSpacing: 4 }}>
-                EST. 2017 • MEN'S ELITE BASKETBALL
+                EST. 2023 • MEN'S ELITE BASKETBALL
               </Typography>
             </motion.div>
           </Box>
