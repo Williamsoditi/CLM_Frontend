@@ -111,7 +111,7 @@ const Footer = () => {
                 </li>
                 <li style={{ marginBottom: '0.5rem' }}>
                   <Link href="/about" color="inherit" underline="none" variant="subtitle1">
-                    About Us
+                    About
                   </Link>
                 </li>
                 <li style={{ marginBottom: '0.5rem' }}>
@@ -126,7 +126,7 @@ const Footer = () => {
                 </li>
                 <li>
                   <Link href="/contact" color="inherit" underline="none" variant="subtitle1">
-                    Contact Us
+                    Contact
                   </Link>
                 </li>
               </Box>
@@ -152,7 +152,7 @@ const Footer = () => {
                 
                 <IconButton
                   aria-label="Email"
-                  href="mailto:Cliquemambas1960@gmail.com"
+                  href="mailto:cliquemambasmbb@gmail.com"
                   sx={{ color: 'text.primary', '&:hover': { color: 'primary.main', transform: 'scale(1.1)' } }}
                 >
                   <MailOutlineIcon />
@@ -169,8 +169,8 @@ const Footer = () => {
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
                 <Box component="span" sx={{ fontWeight: 'bold' }}>Email:</Box>{' '}
-                <Link href="mailto:Cliquemambas1960@gmail.com" color="inherit" underline="hover">
-                  Cliquemambas1960@gmail.com
+                <Link href="mailto:cliquemambasmbb@gmail.com" color="inherit" underline="hover">
+                  cliquemambasmbb@gmail.com
                 </Link>
               </Typography>
               {/* <Typography variant="body2">

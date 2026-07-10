@@ -104,7 +104,7 @@ const Hero = () => {
 
             {/* Gmail/Email Icon - NEW ADDITION */}
             <a
-              href="mailto:Cliquemambas1960@gmail.com"
+              href="mailto:cliquemambasmbb@gmail.com"
               aria-label="Email"
               className="text-white hover:text-red-500 transition-transform duration-300 transform hover:scale-125"
             >
