@@ -90,7 +90,7 @@ const Footer = () => {
                 
               </Box>
               <Typography variant="body2" sx={{ maxWidth: { md: '300px' }, mx: { xs: 'auto', md: '0' } }}>
-                Uniting passion and skill on the court. Join our journey to greatness!
+                Uniting passion and skill on the court. Join our journey to greatness.
               </Typography>
               </a>
               
