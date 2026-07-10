@@ -7,7 +7,7 @@ import type{ InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios
 // If running in production, Vite pulls from .env.production -> https://api.cliquemambas.org/api/
 const BASE_URL = import.meta.env.VITE_API_URL 
   ? `${import.meta.env.VITE_API_URL}/api/` 
-  : 'http://127.0.0.1:8000/api/'; // Safe local default fallback
+  : 'https://api.cliquemambas.org/api/'; // Safe local default fallback
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,  
