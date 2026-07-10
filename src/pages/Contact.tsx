@@ -346,12 +346,12 @@ const Contact = () => {
             >
               <div className="mt-4 flex space-x-6 text-gray-500 text-sm">
                 <a
-                  href="mailto:Cliquemambas1960@gmail.com"
+                  href="mailto:cliquemambasmbb@gmail.com"
                   className="hover:text-gray-800"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Cliquemambas1960@gmail.com
+                  cliquemambasmbb@gmail.com
                 </a>
                 <a
                   href="https://www.instagram.com/cliquemambas/"

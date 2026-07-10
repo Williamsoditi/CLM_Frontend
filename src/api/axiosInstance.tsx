@@ -1,14 +1,17 @@
-// src/api/axiosInstance.js
+// src/api/axiosInstance.tsx
 import axios from 'axios';
+import type{ InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
-// Create a custom Axios instance
+// 1. Determine the Base URL dynamically
+// If running locally, Vite pulls from .env.development -> http://127.0.0.1:8000/api/
+// If running in production, Vite pulls from .env.production -> https://api.cliquemambas.org/api/
+const BASE_URL = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api/` 
+  : 'http://127.0.0.1:8000/api/'; // Safe local default fallback
+
 const axiosInstance = axios.create({
-  // **IMPORTANT: Replace with your actual Django API base URL**
-  // This should be the address where your Django backend is running.
-  baseURL: import.meta.env.VITE_API_URL 
-    ? `${import.meta.env.VITE_API_URL}/api/` 
-    : 'https://localhost:8000/api/',  
-  timeout: 5000, // Request timeout in milliseconds
+  baseURL: BASE_URL,  
+  timeout: 5000, // 5-second request timeout
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -16,86 +19,78 @@ const axiosInstance = axios.create({
 });
 
 // --- Request Interceptor ---
-// This runs BEFORE every request is sent.
-// Its purpose is to attach the JWT Access Token to the Authorization header
-// if it exists in localStorage.
+// Runs BEFORE every request to attach the JWT Access Token if it's stored
 axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token'); // Get the current access token
-    if (token) {
-      // If a token exists, set the Authorization header using the Bearer scheme
+  (config: InternalAxiosRequestConfig) => {
+    const token = localStorage.getItem('access_token'); 
+    if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    return config; // Return the modified config to continue the request
+    return config; 
   },
-  (error) => {
-    // Handle request errors (e.g., network issues)
+  (error: AxiosError) => {
     return Promise.reject(error);
   }
 );
 
+// Custom interface to extend AxiosRequestConfig so TypeScript allows our custom _retry flag
+interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
+
 // --- Response Interceptor ---
-// This runs AFTER a response is received.
-// Its primary purpose is to handle 401 (Unauthorized) errors,
-// specifically to try and refresh the access token using the refresh token.
+// Runs AFTER a response is received to catch 401 Unauthorized errors and refresh tokens
 axiosInstance.interceptors.response.use(
-  (response) => response, // If the response is successful (2xx status), just pass it through
-  async (error) => {
-    const originalRequest = error.config; // Get the original request that received the error
+  (response: AxiosResponse) => response, 
+  async (error: AxiosError) => {
+    const originalRequest = error.config as CustomAxiosRequestConfig; 
 
     // Conditions to attempt token refresh:
     // 1. Error status is 401 (Unauthorized)
-    // 2. The request hasn't been retried yet (to prevent infinite loops)
-    // 3. The request is NOT for the token refresh endpoint itself (to prevent recursion)
-    if (error.response && error.response.status === 401 && !originalRequest._retry && originalRequest.url.indexOf('auth/token/refresh/') === -1) {
-      originalRequest._retry = true; // Mark this request as retried
+    // 2. The request hasn't been retried yet (prevents loops)
+    // 3. The request isn't the refresh endpoint itself
+    if (
+      error.response && 
+      error.response.status === 401 && 
+      originalRequest &&
+      !originalRequest._retry && 
+      originalRequest.url && 
+      originalRequest.url.indexOf('auth/token/refresh/') === -1
+    ) {
+      originalRequest._retry = true; 
 
-      const refreshToken = localStorage.getItem('refresh_token'); // Get the refresh token
+      const refreshToken = localStorage.getItem('refresh_token'); 
 
       if (refreshToken) {
         try {
-          // Attempt to get a new access token using the refresh token
-          const response = await axios.post('http://localhost:8000/api/auth/token/refresh/', {
+          // Uses the instance relative path so it automatically goes to localhost or production
+          const response = await axiosInstance.post('auth/token/refresh/', {
             refresh: refreshToken,
           });
           
-          // Store the new access token in localStorage
+          // Store the new working access token
           localStorage.setItem('access_token', response.data.access);
           
-          // Update the Authorization header of the original failed request
-          originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
+          // Inject the new token into the failed original request and re-send it
+          if (originalRequest.headers) {
+            originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
+          }
           
-          // Re-send the original request with the new access token
           return axiosInstance(originalRequest);
         } catch (refreshError) {
-          // If refreshing token fails (e.g., refresh token expired or invalid),
-          // log out the user by clearing all tokens.
+          // If the refresh token is also invalid/expired, log out completely
           console.error('Refresh token failed. Logging out...', refreshError);
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
-          
-          // **IMPORTANT:** You should also redirect the user to the login page here.
-          // This often requires using a history/navigate object if not within a component.
-          // For simplicity, a direct window.location.href might work, but it's less React-idiomatic.
-          // You might need to add a global event or update AuthContext to trigger navigation.
-          // Example (if AuthContext's logout is available globally, which it is):
-          // You would need to import { AuthContext } from '../context/AuthContext';
-          // and use AuthContext.Provider's value or a global event emitter to trigger logout.
-          // For now, simple clear localStorage and reject:
-          // window.location.href = '/admin-login'; // Direct redirect (might cause full page reload)
-          return Promise.reject(refreshError); // Reject the promise to indicate failure
+          return Promise.reject(refreshError); 
         }
       } else {
-        // No refresh token found, meaning user cannot re-authenticate automatically.
-        // Clear any remaining access token and prompt for re-login.
         console.warn('No refresh token found. User needs to log in again.');
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        // window.location.href = '/admin-login'; // Redirect to login
       }
     }
-    // For all other errors (non-401, already retried, or refresh token endpoint errors),
-    // just reject the promise to propagate the error to the calling component.
+    
     return Promise.reject(error);
   }
 );
